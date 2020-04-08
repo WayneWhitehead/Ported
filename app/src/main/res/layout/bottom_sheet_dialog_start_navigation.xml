@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/black">
+
+    <LinearLayout
+        android:layout_margin="10dp"
+        android:layout_width="match_parent"
+        android:weightSum="10"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="8"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:text="@string/start"
+                android:textColor="@color/grayText" />
+            <TextView
+                android:id="@+id/startAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/TextAppearance.AppCompat.SearchResult.Title"
+                android:textAlignment="textStart"
+                android:text="@string/location_name_and_address"
+                android:textColor="@color/whiteText" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:text="@string/end"
+                android:textColor="@color/grayText" />
+            <TextView
+                android:id="@+id/endAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/TextAppearance.AppCompat.SearchResult.Title"
+                android:textAlignment="textStart"
+                android:text="@string/location_name_and_address"
+                android:textColor="@color/whiteText" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.005"
+            android:layout_marginVertical="10dp"
+            android:background="@android:color/white"
+            android:layout_marginHorizontal="20dp"
+            android:gravity="center"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.9"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/travelTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/TextAppearance.AppCompat.Display1"
+                android:textAlignment="center"
+                android:layout_gravity="center"
+                android:text="30"
+                android:textColor="@color/whiteText" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:layout_gravity="center"
+                android:text="Minutes"
+                android:textSize="12sp"
+                android:textColor="@color/whiteText" />
+
+            <TextView
+                android:id="@+id/distance"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/TextAppearance.AppCompat.Body1"
+                android:textAlignment="center"
+                android:text="@string/distance"
+                android:paddingBottom="10dp"
+                android:textColor="@color/whiteText" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@android:color/white"
+        android:layout_margin="20dp"
+        android:gravity="center"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/navigate"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:backgroundTint="@color/colorPrimary"
+        app:rippleColor="@color/colorPrimaryDark"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:text="@string/start_navigation"
+        app:cornerRadius="0dp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/buttonCancel"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        app:rippleColor="@android:color/black"
+        android:backgroundTint="@color/colorPrimaryDark"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:text="@string/cancel"
+        android:textColor="@android:color/white"
+        app:cornerRadius="0dp" />
+</LinearLayout>

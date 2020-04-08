@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/black">
+
+    <TextView
+        android:id="@+id/nameAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/TextAppearance.AppCompat.SearchResult.Title"
+        android:textAlignment="center"
+        android:text="@string/location_name_and_address"
+        android:paddingTop="20dp"
+        android:textColor="@android:color/white" />
+
+    <TextView
+        android:id="@+id/distance"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/TextAppearance.AppCompat.Body1"
+        android:textAlignment="center"
+        android:text="@string/distance"
+        android:paddingBottom="10dp"
+        android:textColor="@android:color/white" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@android:color/white"
+        android:layout_marginHorizontal="20dp"
+        android:gravity="center"/>
+
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/toggleButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="10dp"
+        app:singleSelection="true">
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button1"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_weight="0.33"
+            android:text="Driving"
+            style="?attr/materialButtonOutlinedStyle" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button2"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_weight="0.33"
+            android:text="Public"
+            style="?attr/materialButtonOutlinedStyle" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button3"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_weight="0.33"
+            android:text="Walking"
+            app:iconSize="30dp"
+            style="?attr/materialButtonOutlinedStyle" />
+    </com.google.android.material.button.MaterialButtonToggleGroup>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/getDirections"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:backgroundTint="@color/colorPrimary"
+        app:rippleColor="@color/colorPrimaryDark"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:text="@string/get_directions"
+        app:cornerRadius="0dp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/buttonCancel"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        app:rippleColor="@android:color/black"
+        android:backgroundTint="@color/colorPrimaryDark"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:text="@string/cancel"
+        android:textColor="@android:color/white"
+        app:cornerRadius="0dp" />
+</LinearLayout>

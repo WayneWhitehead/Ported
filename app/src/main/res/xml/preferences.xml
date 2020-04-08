@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory
+        android:title="Sync Information"
+        android:icon="@drawable/settings"
+        app:iconTint="@color/colorPrimary"
+        android:key="sync_category">
+
+        <EditTextPreference
+            android:key="full_name"
+            android:title="Name"
+            android:summary="Enter Your Complete Name"
+            android:dialogTitle="Your Name"
+            android:dialogMessage="Enter Your Complete Name"
+            android:defaultValue="Your name..."
+            android:inputType="textCapWords"/>
+
+        <SwitchPreference
+            android:key="use_imperial"
+            android:title="Use the imperial system"
+            android:switchTextOff="Metric"
+            android:switchTextOn="Imperial"/>
+
+        <CheckBoxPreference
+            android:key="perform_sync"
+            android:summary="Enable or disable data sync"
+            android:title="Enable Auto Sync"
+            android:defaultValue="true"/>
+
+        <ListPreference
+            android:key="modeOfTransport"
+            android:title="Favourite mode of transport"
+            android:summary="Choose your default transport option"
+            android:defaultValue="Car"
+            android:entries="@array/modesOfTransport"
+            android:entryValues="@array/modesOfTransport"
+            android:dependency="perform_sync"/>
+
+    </PreferenceCategory>
+</PreferenceScreen>

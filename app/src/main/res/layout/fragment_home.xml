@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/mapContainer"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/map_fragment"
+        android:name="com.tomtom.online.sdk.map.MapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/AppTheme.AppBarOverlay">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:titleTextColor="@android:color/black"
+                app:popupTheme="@style/AppTheme.PopupOverlay">
+
+                <AutoCompleteTextView
+                    android:hint="@string/search"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:visibility="gone"
+                    android:id="@+id/atv_main_departure_location"
+                    android:inputType="textPostalAddress"
+                    android:paddingHorizontal="20dp"
+                    android:imeOptions="actionSearch" />
+
+                <AutoCompleteTextView
+                    android:hint="@string/search"
+                    android:layout_height="match_parent"
+                    android:layout_width="match_parent"
+                    android:id="@+id/atv_main_destination_location"
+                    android:inputType="textPostalAddress"
+                    android:backgroundTint="@color/colorPrimaryDark"
+                    android:textColorHint="@color/colorPrimaryDark"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="18sp"
+                    android:maxLines="2"
+                    android:imeOptions="actionSearch" />
+            </androidx.appcompat.widget.Toolbar>
+
+        </com.google.android.material.appbar.AppBarLayout>
+    </com.google.android.material.card.MaterialCardView>
+</FrameLayout>
