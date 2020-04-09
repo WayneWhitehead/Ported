@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,23 +24,11 @@ import com.hidesign.ported.Functions;
 import com.hidesign.ported.R;
 import com.hidesign.ported.adapters.RecyclerAdapter;
 import com.hidesign.ported.models.Trips;
-import com.tomtom.online.sdk.common.location.LatLng;
-import com.tomtom.online.sdk.map.RouteBuilder;
-import com.tomtom.online.sdk.routing.OnlineRoutingApi;
-import com.tomtom.online.sdk.routing.RoutingApi;
-import com.tomtom.online.sdk.routing.data.FullRoute;
-import com.tomtom.online.sdk.routing.data.RouteQuery;
-import com.tomtom.online.sdk.routing.data.RouteQueryBuilder;
-import com.tomtom.online.sdk.routing.data.RouteResponse;
-import com.tomtom.online.sdk.routing.data.TravelMode;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.observers.DisposableSingleObserver;
-import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class PastTripFragment extends Fragment {
@@ -49,7 +36,7 @@ public class PastTripFragment extends Fragment {
     private static final String TAG = "HomeFragment";
     private RecyclerView mRecyclerView;
     private List<Trips> pastTrips = new ArrayList<>();
-    private Functions fbFunctions = new Functions();
+    private Functions func = new Functions();
     private DatabaseReference mDatabase;
     private ProgressBar mProgressBar;
 
@@ -88,6 +75,7 @@ public class PastTripFragment extends Fragment {
                     Trips post = postSnapshot.getValue(Trips.class);
                     pastTrips.add(post);
                 }
+                func.sortList(pastTrips);
                 showList(pastTrips);
                 mProgressBar.setVisibility(View.GONE);
             }
@@ -105,7 +93,7 @@ public class PastTripFragment extends Fragment {
         mAdapter.setOnRecyclerAdapterListener((adapter, v, position) -> {
 
             TextView _Date = v.view.findViewById(R.id.Date);
-            _Date.setText(fbFunctions.getDate(display.get(position).getTripDate(), "dd MMM yyyy HH:mm"));
+            _Date.setText(func.getDate(display.get(position).getTripDate(), "dd MMM yyyy HH:mm"));
 
             TextView _StartAddress = v.view.findViewById(R.id.StartLocation);
             _StartAddress.setText((display.get(position).getStartAddress()));
@@ -113,7 +101,7 @@ public class PastTripFragment extends Fragment {
             TextView _EndAddress = v.view.findViewById(R.id.EndLocation);
             _EndAddress.setText(display.get(position).getEndAddress());
 
-            List<String> distance = fbFunctions.calculateDistance(display.get(position).getTripDistance());
+            List<String> distance = func.calculateDistance(display.get(position).getTripDistance());
             TextView _Distance = v.view.findViewById(R.id.Distance);
             _Distance.setText(distance.get(0));
             TextView _DistanceSystem = v.view.findViewById(R.id.DistanceSystem);

@@ -36,6 +36,22 @@ public class Functions {
 
     public Functions(){}
 
+    public void sortList(List<Trips> list){
+        int n = list.size();
+        int k;
+        for (int m = n; m >= 0; m--) {
+            for (int i = 0; i < n - 1; i++) {
+                k = i + 1;
+                if (list.get(i).getTripDate() < list.get(k).getTripDate()) {
+                    Trips temp;
+                    temp = list.get(i);
+                    list.set(i, list.get(k));
+                    list.set(k, temp);
+                }
+            }
+        }
+    }
+
     public TravelMode getTravelMode(int i){
         switch (i) {
             case 2131230803: return TravelMode.CAR;
