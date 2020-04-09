@@ -9,20 +9,17 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -92,7 +89,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private TomtomMap tomtomMap;
     private LatLng latLngCurrentPosition, latLngDeparture, latLngDestination;
     private LocationCallback locationCallback;
-    private Functions fbFunctions = new Functions();
+    private Functions func = new Functions();
     private DatabaseReference mDatabase;
 
     private BottomSheetDialog bottomSheetDialog;
@@ -258,11 +255,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             destination.setLatitude(marker.getLatitude());
             destination.setLongitude(marker.getLongitude());
 
-            List<String> distanceVar = fbFunctions.calculateDistance(uLocation.distanceTo(destination));
+            List<String> distanceVar = func.calculateDistance(uLocation.distanceTo(destination));
             TextView distance = vBottomSheet.findViewById(R.id.distance);
             distance.setText(String.format("%s%s", distanceVar.get(0), distanceVar.get(1)));
             TextView address = vBottomSheet.findViewById(R.id.nameAddress);
-            address.setText(fbFunctions.getAddress(marker.getLatitude(), marker.getLongitude(), getContext()));
+            address.setText(func.getAddress(marker.getLatitude(), marker.getLongitude(), getContext()));
 
             modeOfTransport = vBottomSheet.findViewById(R.id.toggleButton);
             modeOfTransport.setSingleSelection(true);
@@ -274,7 +271,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             vBottomSheet.findViewById(R.id.getDirections).setOnClickListener(v ->
                     newRoute(new LatLng(uLocation.getLatitude(), uLocation.getLongitude()),
                             marker,
-                            getTravelMode(modeOfTransport.getCheckedButtonId())));
+                            func.getTravelMode(modeOfTransport.getCheckedButtonId())));
 
             bottomSheetDialog.show();
         } else {
@@ -298,18 +295,18 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             uLocation = tomtomMap.getUserLocation();
 
             TextView startAddress = vBottomSheet.findViewById(R.id.startAddress);
-            startAddress.setText(fbFunctions.getAddress(route.getCoordinates().get(0).getLatitude(), route.getCoordinates().get(0).getLongitude(), getContext()));
+            startAddress.setText(func.getAddress(route.getCoordinates().get(0).getLatitude(), route.getCoordinates().get(0).getLongitude(), getContext()));
 
             TextView endAddress = vBottomSheet.findViewById(R.id.endAddress);
             int lastPoint = route.getCoordinates().size() -1;
-            endAddress.setText(fbFunctions.getAddress(route.getCoordinates().get(lastPoint).getLatitude(), route.getCoordinates().get(lastPoint).getLongitude(), getContext()));
+            endAddress.setText(func.getAddress(route.getCoordinates().get(lastPoint).getLatitude(), route.getCoordinates().get(lastPoint).getLongitude(), getContext()));
 
-            List<String> distanceVar = fbFunctions.calculateDistance(route.getSummary().getLengthInMeters());
+            List<String> distanceVar = func.calculateDistance(route.getSummary().getLengthInMeters());
             TextView distance = vBottomSheet.findViewById(R.id.distance);
             distance.setText(String.format("%s%s", distanceVar.get(0), distanceVar.get(1)));
 
             TextView time = vBottomSheet.findViewById(R.id.travelTime);
-            time.setText(fbFunctions.formatTimeFromSeconds(route.getSummary().getTravelTimeInSeconds()));
+            time.setText(func.formatTimeFromSeconds(route.getSummary().getTravelTimeInSeconds()));
 
             vBottomSheet.findViewById(R.id.buttonCancel).setOnClickListener(v -> {
                 bottomSheetDialog.dismiss();
@@ -360,8 +357,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
         //Uploading trip data to firebase
         int size = route.getCoordinates().size()-1;
-        String start = fbFunctions.getAddress(route.getCoordinates().get(0).getLatitude(), route.getCoordinates().get(0).getLongitude(), getActivity());
-        String end = fbFunctions.getAddress(route.getCoordinates().get(size).getLatitude(), route.getCoordinates().get(size).getLongitude(), getActivity());
+        String start = func.getAddress(route.getCoordinates().get(0).getLatitude(), route.getCoordinates().get(0).getLongitude(), getActivity());
+        String end = func.getAddress(route.getCoordinates().get(size).getLatitude(), route.getCoordinates().get(size).getLongitude(), getActivity());
         Trips temp = new Trips(
                 route.getCoordinates().get(0), start,
                 route.getCoordinates().get(size), end,
@@ -427,15 +424,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
             }
         });
-    }
-
-    private TravelMode getTravelMode(int i){
-        switch (i) {
-            case 2131230803: return TravelMode.CAR;
-            case 2131230804: return TravelMode.BUS;
-            case 2131230805: return TravelMode.PEDESTRIAN;
-        }
-        return TravelMode.CAR;
     }
 
     private void initLocationSource() {

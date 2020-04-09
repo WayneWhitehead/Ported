@@ -17,6 +17,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.hidesign.ported.models.Trips;
 import com.hidesign.ported.ui.home.PastTripFragment;
 import com.tomtom.online.sdk.routing.data.FullRoute;
+import com.tomtom.online.sdk.routing.data.TravelMode;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -34,6 +35,15 @@ import timber.log.Timber;
 public class Functions {
 
     public Functions(){}
+
+    public TravelMode getTravelMode(int i){
+        switch (i) {
+            case 2131230803: return TravelMode.CAR;
+            case 2131230804: return TravelMode.BUS;
+            case 2131230805: return TravelMode.PEDESTRIAN;
+        }
+        return TravelMode.CAR;
+    }
 
     public String getAddress(double latitude, double longitude, Context c) {
         Geocoder geo = new Geocoder(c, Locale.getDefault());
