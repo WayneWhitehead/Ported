@@ -15,51 +15,52 @@
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="25dp"
+        app:cardCornerRadius="30dp"
+        app:cardBackgroundColor="@color/colorPrimary"
         android:layout_margin="10dp">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                app:cardCornerRadius="60dp">
-                <View
-                    android:id="@+id/drawerButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="5dp"
-                    android:background="@drawable/menu"
-                    android:clickable="true"/>
-            </com.google.android.material.card.MaterialCardView>
+            <ImageView
+                android:id="@+id/drawerButton"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:src="@drawable/menu"
+                android:clickable="true"
+                android:contentDescription="@string/menuicon" />
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@android:color/black"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="5dp"
                 android:orientation="vertical">
 
                 <AutoCompleteTextView
-                    android:hint="@string/search"
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent"
-                    android:visibility="gone"
                     android:id="@+id/atv_main_departure_location"
-                    android:inputType="textPostalAddress"
-                    android:paddingHorizontal="20dp"
-                    android:imeOptions="actionSearch" />
-
-                <AutoCompleteTextView
                     android:hint="@string/search"
                     android:layout_height="match_parent"
                     android:layout_width="match_parent"
+                    android:visibility="gone"
+                    android:inputType="textPostalAddress"
+                    android:backgroundTint="@android:color/black"
+                    android:textColorHint="@color/colorAccent"
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp"
+                    android:maxLines="2"
+                    android:imeOptions="actionSearch" />
+
+                <AutoCompleteTextView
                     android:id="@+id/atv_main_destination_location"
+                    android:hint="@string/search"
+                    android:layout_height="match_parent"
+                    android:layout_width="match_parent"
                     android:inputType="textPostalAddress"
                     android:backgroundTint="@color/colorPrimary"
-                    android:textColorHint="@color/colorPrimaryDark"
-                    android:textColor="@color/colorPrimary"
+                    android:textColorHint="@color/colorAccent"
+                    android:textColor="@android:color/black"
                     android:textSize="18sp"
                     android:maxLines="2"
                     android:imeOptions="actionSearch" />

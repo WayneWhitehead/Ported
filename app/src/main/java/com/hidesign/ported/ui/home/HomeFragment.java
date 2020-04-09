@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -115,10 +116,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         public void onMapReady(@NotNull TomtomMap map) {
             tomtomMap = map;
             tomtomMap.setMyLocationEnabled(true);
-            tomtomMap.getUiSettings().setMapTilesType(MapTilesType.VECTOR);
+            tomtomMap.getUiSettings().setMapTilesType(MapTilesType.RASTER);
             tomtomMap.getTrafficSettings().turnOnVectorTrafficFlowTiles();
             tomtomMap.getTrafficSettings().turnOnVectorTrafficIncidents();
-            tomtomMap.getUiSettings().getCompassView().show();
 
             tomtomMap.addOnMarkerClickListener(marker -> setRoutePlanner(marker.getPosition()));
 
@@ -130,7 +130,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         View root = inflater.inflate(R.layout.fragment_home, container, false);
 
         Objects.requireNonNull(((AppCompatActivity) Objects.requireNonNull(getActivity())).getSupportActionBar()).hide();
-        View openDrawer = root.findViewById(R.id.drawerButton);
+        ImageView openDrawer = root.findViewById(R.id.drawerButton);
         openDrawer.setOnClickListener(v -> {
             DrawerLayout navDrawer = getActivity().findViewById(R.id.drawer_layout);
             navDrawer.openDrawer(GravityCompat.START);
