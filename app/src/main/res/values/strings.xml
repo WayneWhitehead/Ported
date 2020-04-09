@@ -34,4 +34,5 @@
     <string name="end">End</string>
     <string name="default_date">02/02/2020 12:12</string>
     <string name="logo">Logo</string>
+    <string name="template_address">2 The Drive, Durban North, Durban, 4051, South Africa</string>
 </resources>

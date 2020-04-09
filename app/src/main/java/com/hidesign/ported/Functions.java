@@ -60,7 +60,7 @@ public class Functions {
         List<String> temp = new ArrayList<>();
         if (distance >= 1000){
             distance/=1000;
-            temp.add(String.format(Locale.ENGLISH, "%.2f", distance)) ;
+            temp.add(String.format(Locale.ENGLISH, "%.1f", distance)) ;
             temp.add("Km");
             return temp;
         } else {

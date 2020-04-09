@@ -9,11 +9,13 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +23,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -100,7 +104,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private Runnable searchRunnable;
     private ArrayAdapter<String> searchAdapter;
     private List<String> searchAutocompleteList = new ArrayList<>();
-    private Map<String, LatLng> searchResultsMap = new HashMap<>();z
+    private Map<String, LatLng> searchResultsMap = new HashMap<>();
 
     private Matcher matcher;
     private Chevron chevron;
@@ -126,10 +130,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         View root = inflater.inflate(R.layout.fragment_home, container, false);
 
         Objects.requireNonNull(((AppCompatActivity) Objects.requireNonNull(getActivity())).getSupportActionBar()).hide();
-        Toolbar toolbar = root.findViewById(R.id.toolbar);
-        AppCompatActivity activity = (AppCompatActivity) getActivity();
-        activity.setSupportActionBar(toolbar);
-        Objects.requireNonNull(activity.getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        View openDrawer = root.findViewById(R.id.drawerButton);
+        openDrawer.setOnClickListener(v -> {
+            DrawerLayout navDrawer = getActivity().findViewById(R.id.drawer_layout);
+            navDrawer.openDrawer(GravityCompat.START);
+        });
 
         initLocationSource();
 
