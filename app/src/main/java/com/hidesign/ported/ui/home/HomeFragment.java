@@ -116,7 +116,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         public void onMapReady(@NotNull TomtomMap map) {
             tomtomMap = map;
             tomtomMap.setMyLocationEnabled(true);
-            tomtomMap.getUiSettings().setMapTilesType(MapTilesType.RASTER);
+            tomtomMap.getUiSettings().setMapTilesType(MapTilesType.VECTOR);
             tomtomMap.getTrafficSettings().turnOnVectorTrafficFlowTiles();
             tomtomMap.getTrafficSettings().turnOnVectorTrafficIncidents();
 
@@ -158,26 +158,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         }
 
         return root;
-    }
-
-    private void getLastKnownLocation(){
-        fusedLocationClient.getLastLocation().addOnSuccessListener(Objects.requireNonNull(getActivity()), location -> {
-            if (location != null) {
-                uLocation = location;
-                latLngCurrentPosition = new LatLng(location.getLatitude(), location.getLongitude());
-                tomtomMap.centerOn(uLocation.getLatitude(), uLocation.getLongitude(), 15);
-            }
-        });
-    }
-
-    private void initLocationSource() {
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(Objects.requireNonNull(getActivity()));
-
-        PermissionChecker permissionChecker = AndroidPermissionChecker.createLocationChecker(getActivity());
-        if(permissionChecker.ifNotAllPermissionGranted()) {
-            ActivityCompat.requestPermissions(Objects.requireNonNull(getActivity()), new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
-                    Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_LOCATION);
-        }
     }
 
     @Override
@@ -287,7 +267,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             modeOfTransport = vBottomSheet.findViewById(R.id.toggleButton);
             modeOfTransport.setSingleSelection(true);
 
-            vBottomSheet.findViewById(R.id.buttonCancel).setOnClickListener(v -> bottomSheetDialog.dismiss());
+            vBottomSheet.findViewById(R.id.buttonCancel).setOnClickListener(v -> {
+                bottomSheetDialog.dismiss();
+                tomtomMap.clear();
+            });
             vBottomSheet.findViewById(R.id.getDirections).setOnClickListener(v ->
                     newRoute(new LatLng(uLocation.getLatitude(), uLocation.getLongitude()),
                             marker,
@@ -328,12 +311,14 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             TextView time = vBottomSheet.findViewById(R.id.travelTime);
             time.setText(fbFunctions.formatTimeFromSeconds(route.getSummary().getTravelTimeInSeconds()));
 
-            vBottomSheet.findViewById(R.id.buttonCancel).setOnClickListener(v -> bottomSheetDialog.dismiss());
+            vBottomSheet.findViewById(R.id.buttonCancel).setOnClickListener(v -> {
+                bottomSheetDialog.dismiss();
+                tomtomMap.clear();
+            });
             vBottomSheet.findViewById(R.id.navigate).setOnClickListener(v -> {
                 bottomSheetDialog.dismiss();
                 startNavigation(route);
             });
-
             bottomSheetDialog.show();
         } else {
             bottomSheetDialog.dismiss();
@@ -352,6 +337,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         tomtomMap.set3DMode();
         tomtomMap.zoomTo(18);
 
+        //setting constant location updates to update the UI with user position
         locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
@@ -366,27 +352,38 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         startLocationUpdates();
         tomtomMap.getDrivingSettings().startTracking(chevron);
 
+        //Updating Ui for navigation
+        Objects.requireNonNull(getActivity()).findViewById(R.id.searchViews).setVisibility(View.GONE);
+        getActivity().findViewById(R.id.navigationBar).setVisibility(View.VISIBLE);
+        ImageView cancel = getActivity().findViewById(R.id.cancelNavigation);
+        cancel.setOnClickListener(v -> stopNavigation());
+
+        //Uploading trip data to firebase
+        int size = route.getCoordinates().size()-1;
+        String start = fbFunctions.getAddress(route.getCoordinates().get(0).getLatitude(), route.getCoordinates().get(0).getLongitude(), getActivity());
+        String end = fbFunctions.getAddress(route.getCoordinates().get(size).getLatitude(), route.getCoordinates().get(size).getLongitude(), getActivity());
         Trips temp = new Trips(
-                route.getCoordinates().get(0),
-                fbFunctions.getAddress(
-                        route.getCoordinates().get(0).getLatitude(),
-                        route.getCoordinates().get(0).getLongitude(), getActivity()),
-                route.getCoordinates().get(route.getCoordinates().size()-1),
-                fbFunctions.getAddress(
-                        route.getCoordinates().get(route.getCoordinates().size()-1).getLatitude(),
-                        route.getCoordinates().get(route.getCoordinates().size()-1).getLongitude(), getActivity()),
+                route.getCoordinates().get(0), start,
+                route.getCoordinates().get(size), end,
                 System.currentTimeMillis(),
                 route.getSummary().getLengthInMeters());
-
         mDatabase.child("Trips").child(UUID.randomUUID().toString()).setValue(temp);
+    }
+
+    private void stopNavigation(){
+        Objects.requireNonNull(getActivity()).findViewById(R.id.searchViews).setVisibility(View.VISIBLE);
+        getActivity().findViewById(R.id.navigationBar).setVisibility(View.GONE);
+
+        tomtomMap.getDrivingSettings().stopTracking();
+        tomtomMap.clear();
+//        int marker = route.getCoordinates().size()-1;
+//        newMarker(route.getCoordinates().get(marker));
     }
 
     private void createMatcher(FullRoute route) {
         Preconditions.checkArgument(tomtomMap.getRoutes().size() > 0);
         matcher = MatcherFactory.createMatcher(LatLngTraceMatchingDataProvider.fromPoints(route.getCoordinates()));
         matcher.setMatcherListener(matchResult -> {
-            Objects.requireNonNull(getActivity()).findViewById(R.id.atv_main_destination_location).setVisibility(View.GONE);
-
             chevron.setDimmed(!matchResult.isMatched());
             chevron.setLocation(matchResult.getMatchedLocation());
             chevron.show();
@@ -441,10 +438,37 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         return TravelMode.CAR;
     }
 
+    private void initLocationSource() {
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(Objects.requireNonNull(getActivity()));
+
+        PermissionChecker permissionChecker = AndroidPermissionChecker.createLocationChecker(getActivity());
+        if(permissionChecker.ifNotAllPermissionGranted()) {
+            ActivityCompat.requestPermissions(Objects.requireNonNull(getActivity()), new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_LOCATION);
+        }
+    }
+
+    private void getLastKnownLocation(){
+        fusedLocationClient.getLastLocation().addOnSuccessListener(Objects.requireNonNull(getActivity()), location -> {
+            if (location != null) {
+                uLocation = location;
+                latLngCurrentPosition = new LatLng(location.getLatitude(), location.getLongitude());
+                tomtomMap.centerOn(uLocation.getLatitude(), uLocation.getLongitude(), 15);
+            }
+        });
+    }
+
     private void startLocationUpdates() {
         LocationRequest locationRequest = LocationRequest.create().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY).setFastestInterval(10).setInterval(100);
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        stopNavigation();
+    }
+
     @Override
     public void onMapReady(@NonNull TomtomMap tomtomMap) {
         this.tomtomMap = tomtomMap;
