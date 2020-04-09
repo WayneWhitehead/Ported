@@ -27,12 +27,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import timber.log.Timber;
 
-public class FirebaseFunctions {
+public class Functions {
 
-    public FirebaseFunctions (){}
+    public Functions(){}
 
     public String getAddress(double latitude, double longitude, Context c) {
         Geocoder geo = new Geocoder(c, Locale.getDefault());
@@ -67,5 +68,24 @@ public class FirebaseFunctions {
             temp.add("m");
             return temp;
         }
+    }
+
+    public String formatTimeFromSeconds(long secondsTotal) {
+        final String TIME_FORMAT_HOURS_MINUTES = "H'h' m'min'";
+        final String TIME_FORMAT_MINUTES = "m";
+
+        long hours = TimeUnit.SECONDS.toHours(secondsTotal);
+        long minutes = TimeUnit.SECONDS.toMinutes(secondsTotal) - TimeUnit.HOURS.toMinutes(hours);
+        String timeFormat = "";
+
+        if (hours != 0) {
+            timeFormat = TIME_FORMAT_HOURS_MINUTES;
+        } else {
+            if (minutes != 0) {
+                timeFormat = TIME_FORMAT_MINUTES;
+            }
+        }
+        secondsTotal = Math.abs(secondsTotal);
+        return (String) android.text.format.DateFormat.format(timeFormat, TimeUnit.SECONDS.toMillis(secondsTotal));
     }
 }

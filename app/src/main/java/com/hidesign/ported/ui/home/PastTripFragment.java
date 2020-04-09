@@ -1,25 +1,18 @@
 package com.hidesign.ported.ui.home;
 
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.transition.Fade;
-import androidx.transition.Slide;
-import androidx.transition.Transition;
-import androidx.transition.TransitionManager;
-import androidx.transition.Visibility;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -28,15 +21,27 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.hidesign.ported.FirebaseFunctions;
+import com.hidesign.ported.Functions;
 import com.hidesign.ported.R;
 import com.hidesign.ported.adapters.RecyclerAdapter;
 import com.hidesign.ported.models.Trips;
+import com.tomtom.online.sdk.common.location.LatLng;
+import com.tomtom.online.sdk.map.RouteBuilder;
+import com.tomtom.online.sdk.routing.OnlineRoutingApi;
+import com.tomtom.online.sdk.routing.RoutingApi;
+import com.tomtom.online.sdk.routing.data.FullRoute;
+import com.tomtom.online.sdk.routing.data.RouteQuery;
+import com.tomtom.online.sdk.routing.data.RouteQueryBuilder;
+import com.tomtom.online.sdk.routing.data.RouteResponse;
+import com.tomtom.online.sdk.routing.data.TravelMode;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.observers.DisposableSingleObserver;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class PastTripFragment extends Fragment {
@@ -44,7 +49,7 @@ public class PastTripFragment extends Fragment {
     private static final String TAG = "HomeFragment";
     private RecyclerView mRecyclerView;
     private List<Trips> pastTrips = new ArrayList<>();
-    private FirebaseFunctions fbFunctions = new FirebaseFunctions();
+    private Functions fbFunctions = new Functions();
     private DatabaseReference mDatabase;
     private ProgressBar mProgressBar;
 
@@ -98,8 +103,9 @@ public class PastTripFragment extends Fragment {
 
         RecyclerAdapter mAdapter = new RecyclerAdapter(display.size(), R.layout.past_trip_entry);
         mAdapter.setOnRecyclerAdapterListener((adapter, v, position) -> {
+
             TextView _Date = v.view.findViewById(R.id.Date);
-            _Date.setText(fbFunctions.getDate(display.get(position).getTripDate(), "dd MMM yyyy HH:mm:ss:SSS Z"));
+            _Date.setText(fbFunctions.getDate(display.get(position).getTripDate(), "dd MMM yyyy HH:mm"));
 
             TextView _StartAddress = v.view.findViewById(R.id.StartLocation);
             _StartAddress.setText((display.get(position).getStartAddress()));
@@ -113,13 +119,9 @@ public class PastTripFragment extends Fragment {
             TextView _DistanceSystem = v.view.findViewById(R.id.DistanceSystem);
             _DistanceSystem.setText(distance.get(1));
 
-//            v.view.setOnClickListener(v1 -> {
-//                Intent i = new Intent(getActivity(), DetailActivity.class);
-//                postDetails = display.get(position);
-//                i.putExtra("Event", postDetails.getEvent_name());
-//                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), v1, "cardTransition" );
-//                Objects.requireNonNull(getActivity()).startActivity(i, options.toBundle());
-//            });
+            v.view.setOnClickListener(v1 -> {
+
+            });
         });
         mRecyclerView.setAdapter(mAdapter);
     }

@@ -9,7 +9,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,7 +35,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.hidesign.ported.FirebaseFunctions;
+import com.hidesign.ported.Functions;
 import com.hidesign.ported.R;
 import com.hidesign.ported.models.Trips;
 import com.tomtom.online.sdk.common.location.LatLng;
@@ -76,7 +75,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableSingleObserver;
@@ -89,7 +87,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private TomtomMap tomtomMap;
     private LatLng latLngCurrentPosition, latLngDeparture, latLngDestination;
     private LocationCallback locationCallback;
-    private FirebaseFunctions fbFunctions = new FirebaseFunctions();
+    private Functions fbFunctions = new Functions();
     private DatabaseReference mDatabase;
 
     private BottomSheetDialog bottomSheetDialog;
@@ -102,7 +100,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private Runnable searchRunnable;
     private ArrayAdapter<String> searchAdapter;
     private List<String> searchAutocompleteList = new ArrayList<>();
-    private Map<String, LatLng> searchResultsMap = new HashMap<>();
+    private Map<String, LatLng> searchResultsMap = new HashMap<>();z
 
     private Matcher matcher;
     private Chevron chevron;
@@ -323,7 +321,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             distance.setText(String.format("%s%s", distanceVar.get(0), distanceVar.get(1)));
 
             TextView time = vBottomSheet.findViewById(R.id.travelTime);
-            time.setText(formatTimeFromSeconds(route.getSummary().getTravelTimeInSeconds()));
+            time.setText(fbFunctions.formatTimeFromSeconds(route.getSummary().getTravelTimeInSeconds()));
 
             vBottomSheet.findViewById(R.id.buttonCancel).setOnClickListener(v -> bottomSheetDialog.dismiss());
             vBottomSheet.findViewById(R.id.navigate).setOnClickListener(v -> {
@@ -427,25 +425,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
             }
         });
-    }
-
-    private String formatTimeFromSeconds(long secondsTotal) {
-        final String TIME_FORMAT_HOURS_MINUTES = "H'h' m'min'";
-        final String TIME_FORMAT_MINUTES = "m";
-
-        long hours = TimeUnit.SECONDS.toHours(secondsTotal);
-        long minutes = TimeUnit.SECONDS.toMinutes(secondsTotal) - TimeUnit.HOURS.toMinutes(hours);
-        String timeFormat = "";
-
-        if (hours != 0) {
-            timeFormat = TIME_FORMAT_HOURS_MINUTES;
-        } else {
-            if (minutes != 0) {
-                timeFormat = TIME_FORMAT_MINUTES;
-            }
-        }
-        secondsTotal = Math.abs(secondsTotal);
-        return (String) DateFormat.format(timeFormat, TimeUnit.SECONDS.toMillis(secondsTotal));
     }
 
     private TravelMode getTravelMode(int i){
