@@ -85,6 +85,7 @@ import io.reactivex.schedulers.Schedulers;
 public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     private static final int PERMISSION_REQUEST_LOCATION = 0;
+    private Boolean requestingLocationUpdates = false;
     private Location uLocation;
     private TomtomMap tomtomMap;
     private LatLng latLngCurrentPosition, latLngDeparture, latLngDestination;
@@ -371,10 +372,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         Objects.requireNonNull(getActivity()).findViewById(R.id.searchViews).setVisibility(View.VISIBLE);
         getActivity().findViewById(R.id.navigationBar).setVisibility(View.GONE);
 
-        tomtomMap.getDrivingSettings().stopTracking();
-        tomtomMap.clear();
-//        int marker = route.getCoordinates().size()-1;
-//        newMarker(route.getCoordinates().get(marker));
+        if (requestingLocationUpdates){
+            fusedLocationClient.removeLocationUpdates(locationCallback);
+            tomtomMap.getDrivingSettings().stopTracking();
+            tomtomMap.clear();
+        }
     }
 
     private void createMatcher(FullRoute route) {
