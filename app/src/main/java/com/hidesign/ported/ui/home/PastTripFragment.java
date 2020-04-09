@@ -107,10 +107,11 @@ public class PastTripFragment extends Fragment {
             TextView _EndAddress = v.view.findViewById(R.id.EndLocation);
             _EndAddress.setText(display.get(position).getEndAddress());
 
+            List<String> distance = fbFunctions.calculateDistance(display.get(position).getTripDistance());
             TextView _Distance = v.view.findViewById(R.id.Distance);
-            _Distance.setText(fbFunctions.calculateDistance(display.get(position).getTripDistance()));
+            _Distance.setText(distance.get(0));
             TextView _DistanceSystem = v.view.findViewById(R.id.DistanceSystem);
-            _DistanceSystem.setText(new String("Km"));
+            _DistanceSystem.setText(distance.get(1));
 
 //            v.view.setOnClickListener(v1 -> {
 //                Intent i = new Intent(getActivity(), DetailActivity.class);

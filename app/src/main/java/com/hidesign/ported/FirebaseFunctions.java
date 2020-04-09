@@ -55,14 +55,16 @@ public class FirebaseFunctions {
         return simple.format(result);
     }
 
-    public String calculateDistance(float distance){
-        String temp;
+    public List<String> calculateDistance(float distance){
+        List<String> temp = new ArrayList<>();
         if (distance >= 1000){
             distance/=1000;
-            temp = String.format(Locale.ENGLISH, "%.2f", distance) + "Km";
+            temp.add(String.format(Locale.ENGLISH, "%.2f", distance)) ;
+            temp.add("Km");
             return temp;
         } else {
-            temp = String.format(Locale.ENGLISH, "%.0f", distance) + "m";
+            temp.add(String.format(Locale.ENGLISH, "%.0f", distance));
+            temp.add("m");
             return temp;
         }
     }

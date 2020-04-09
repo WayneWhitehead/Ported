@@ -275,8 +275,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             destination.setLatitude(marker.getLatitude());
             destination.setLongitude(marker.getLongitude());
 
+            List<String> distanceVar = fbFunctions.calculateDistance(uLocation.distanceTo(destination));
             TextView distance = vBottomSheet.findViewById(R.id.distance);
-            distance.setText(fbFunctions.calculateDistance(uLocation.distanceTo(destination)));
+            distance.setText(String.format("%s%s", distanceVar.get(0), distanceVar.get(1)));
             TextView address = vBottomSheet.findViewById(R.id.nameAddress);
             address.setText(fbFunctions.getAddress(marker.getLatitude(), marker.getLongitude(), getContext()));
 
@@ -317,8 +318,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             int lastPoint = route.getCoordinates().size() -1;
             endAddress.setText(fbFunctions.getAddress(route.getCoordinates().get(lastPoint).getLatitude(), route.getCoordinates().get(lastPoint).getLongitude(), getContext()));
 
+            List<String> distanceVar = fbFunctions.calculateDistance(route.getSummary().getLengthInMeters());
             TextView distance = vBottomSheet.findViewById(R.id.distance);
-            distance.setText(fbFunctions.calculateDistance(route.getSummary().getLengthInMeters()));
+            distance.setText(String.format("%s%s", distanceVar.get(0), distanceVar.get(1)));
 
             TextView time = vBottomSheet.findViewById(R.id.travelTime);
             time.setText(formatTimeFromSeconds(route.getSummary().getTravelTimeInSeconds()));
