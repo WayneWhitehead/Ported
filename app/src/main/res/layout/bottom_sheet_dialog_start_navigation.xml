@@ -94,13 +94,6 @@
         </LinearLayout>
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@android:color/white"
-        android:layout_margin="20dp"
-        android:gravity="center"/>
-
     <com.google.android.material.button.MaterialButton
         android:id="@+id/navigate"
         android:layout_width="match_parent"

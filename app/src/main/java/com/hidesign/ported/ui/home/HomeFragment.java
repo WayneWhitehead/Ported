@@ -265,10 +265,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             modeOfTransport = vBottomSheet.findViewById(R.id.toggleButton);
             modeOfTransport.setSingleSelection(true);
 
-            vBottomSheet.findViewById(R.id.buttonCancel).setOnClickListener(v -> {
-                bottomSheetDialog.dismiss();
-                tomtomMap.clear();
-            });
+            vBottomSheet.findViewById(R.id.buttonCancel).setOnClickListener(v -> cancel());
             vBottomSheet.findViewById(R.id.getDirections).setOnClickListener(v ->
                     newRoute(new LatLng(uLocation.getLatitude(), uLocation.getLongitude()),
                             marker,
@@ -309,10 +306,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             TextView time = vBottomSheet.findViewById(R.id.travelTime);
             time.setText(func.formatTimeFromSeconds(route.getSummary().getTravelTimeInSeconds()));
 
-            vBottomSheet.findViewById(R.id.buttonCancel).setOnClickListener(v -> {
-                bottomSheetDialog.dismiss();
-                tomtomMap.clear();
-            });
+            vBottomSheet.findViewById(R.id.buttonCancel).setOnClickListener(v -> cancel());
             vBottomSheet.findViewById(R.id.navigate).setOnClickListener(v -> {
                 bottomSheetDialog.dismiss();
                 startNavigation(route);
@@ -371,6 +365,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private void stopNavigation(){
         Objects.requireNonNull(getActivity()).findViewById(R.id.searchViews).setVisibility(View.VISIBLE);
         getActivity().findViewById(R.id.navigationBar).setVisibility(View.GONE);
+        _DestinationLocationSearch.setText("");
 
         if (requestingLocationUpdates){
             fusedLocationClient.removeLocationUpdates(locationCallback);
@@ -378,6 +373,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             tomtomMap.clear();
             requestingLocationUpdates = false;
         }
+    }
+
+    private void cancel(){
+        bottomSheetDialog.dismiss();
+        tomtomMap.clear();
+        _DestinationLocationSearch.setText("");
     }
 
     private void createMatcher(FullRoute route) {

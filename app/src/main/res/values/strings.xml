@@ -37,4 +37,7 @@
     <string name="template_address">2 The Drive, Durban North, Durban, 4051, South Africa</string>
     <string name="menuicon">MenuIcon</string>
     <string name="cancel_button">Cancel Button</string>
+    <string name="driving">Driving</string>
+    <string name="public_string">Public</string>
+    <string name="walking">Walking</string>
 </resources>

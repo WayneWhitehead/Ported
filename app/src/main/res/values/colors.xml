@@ -2,7 +2,7 @@
 <resources>
     <color name="yellowPrimary">#ffeb3b</color>
     <color name="yellowPrimaryDark">#c8b900</color>
-    <color name="colorPrimary">#3C40DF</color>
+    <color name="colorPrimary">#2448FB</color>
     <color name="colorPrimaryDark">#1F217C</color>
     <color name="greenPrimary">#5ef000</color>
     <color name="greenPrimaryDark">#399100</color>

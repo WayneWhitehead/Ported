@@ -44,7 +44,7 @@
             android:layout_width="0dp"
             android:layout_height="60dp"
             android:layout_weight="0.33"
-            android:text="Driving"
+            android:text="@string/driving"
             android:foregroundTint="@color/colorPrimary"
             style="?attr/materialButtonOutlinedStyle" />
         <com.google.android.material.button.MaterialButton
@@ -52,14 +52,14 @@
             android:layout_width="0dp"
             android:layout_height="60dp"
             android:layout_weight="0.33"
-            android:text="Public"
+            android:text="@string/public_string"
             style="?attr/materialButtonOutlinedStyle" />
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button3"
             android:layout_width="0dp"
             android:layout_height="60dp"
             android:layout_weight="0.33"
-            android:text="Walking"
+            android:text="@string/walking"
             app:iconSize="30dp"
             style="?attr/materialButtonOutlinedStyle" />
     </com.google.android.material.button.MaterialButtonToggleGroup>
