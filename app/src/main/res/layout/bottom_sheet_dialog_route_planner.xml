@@ -45,6 +45,7 @@
             android:layout_height="60dp"
             android:layout_weight="0.33"
             android:text="Driving"
+            android:foregroundTint="@color/colorPrimary"
             style="?attr/materialButtonOutlinedStyle" />
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button2"
@@ -72,6 +73,7 @@
         android:insetTop="0dp"
         android:insetBottom="0dp"
         android:text="@string/get_directions"
+        android:textColor="@android:color/white"
         app:cornerRadius="0dp" />
 
     <com.google.android.material.button.MaterialButton

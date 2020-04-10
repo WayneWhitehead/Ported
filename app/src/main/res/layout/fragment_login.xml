@@ -16,7 +16,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:background="@color/colorPrimary"
+            android:background="@color/yellowPrimary"
             android:gravity="bottom"
             android:layout_weight="0.35"
             android:orientation="vertical">
@@ -93,13 +93,14 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_login"
                 android:layout_width="match_parent"
+                android:backgroundTint="@color/yellowPrimary"
                 android:layout_height="55dp"
                 android:layout_marginTop="15dp"
                 android:insetTop="3dp"
                 android:insetBottom="3dp"
                 android:text="SUBMIT"
                 android:textColor="@android:color/black"
-                app:rippleColor="@color/colorPrimaryDark" />
+                app:rippleColor="@color/yellowPrimaryDark" />
 
             <com.google.android.gms.common.SignInButton
                 android:id="@+id/google"

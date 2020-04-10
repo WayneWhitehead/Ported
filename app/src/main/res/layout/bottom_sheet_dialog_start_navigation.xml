@@ -110,6 +110,7 @@
         android:insetTop="0dp"
         android:insetBottom="0dp"
         android:text="@string/start_navigation"
+        android:textColor="@android:color/white"
         app:cornerRadius="0dp" />
 
     <com.google.android.material.button.MaterialButton

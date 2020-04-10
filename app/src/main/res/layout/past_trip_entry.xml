@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:backgroundTint="@color/colorPrimary"
+    android:backgroundTint="@color/redPrimary"
     android:layout_marginVertical="10dp"
     android:layout_marginHorizontal="10dp"
     app:cardCornerRadius="20dp">
@@ -53,7 +53,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAlignment="center"
-                    android:textColor="@android:color/black"
+                    android:textColor="@android:color/white"
                     android:text="@string/template_address"
                     android:textSize="15sp" />
 
@@ -61,14 +61,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
                     android:layout_margin="5dp"
-                    android:background="@color/colorPrimaryDark" />
+                    android:background="@color/redPrimaryDark" />
 
                 <TextView
                     android:id="@+id/EndLocation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAlignment="center"
-                    android:textColor="@android:color/black"
+                    android:textColor="@android:color/white"
                     android:text="@string/template_address"
                     android:textSize="15sp" />
             </LinearLayout>
@@ -76,7 +76,7 @@
             <View
                 android:layout_width="2dp"
                 android:layout_height="match_parent"
-                android:background="@android:color/black"/>
+                android:background="@android:color/white"/>
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -84,7 +84,7 @@
                 android:layout_gravity="center"
                 android:layout_weight="0.25"
                 android:gravity="center"
-                android:background="@color/colorPrimaryDark"
+                android:background="@color/redPrimaryDark"
                 android:orientation="vertical">
 
                 <LinearLayout

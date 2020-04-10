@@ -18,7 +18,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:background="@color/colorPrimary"
+            android:background="@color/yellowPrimary"
             android:gravity="bottom"
             android:layout_weight="0.35"
             android:orientation="vertical">
@@ -116,7 +116,8 @@
                 android:insetBottom="3dp"
                 android:text="SUBMIT"
                 android:textColor="@android:color/black"
-                app:rippleColor="@color/colorPrimaryDark" />
+                android:backgroundTint="@color/yellowPrimary"
+                app:rippleColor="@color/yellowPrimaryDark" />
         </LinearLayout>
     </LinearLayout>
 

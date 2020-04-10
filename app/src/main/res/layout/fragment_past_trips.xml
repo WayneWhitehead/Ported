@@ -3,7 +3,7 @@
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
-    android:layout_marginTop="10dp">
+    android:theme="@style/AppThemeRed">
 
     <ProgressBar
         android:id="@+id/progress_bar"

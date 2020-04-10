@@ -44,7 +44,7 @@ public class PastTripFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View viewInflate = inflater.inflate(R.layout.fragment_list_swipe, container, false);
+        View viewInflate = inflater.inflate(R.layout.fragment_past_trips, container, false);
 
         Objects.requireNonNull(((AppCompatActivity) Objects.requireNonNull(getActivity())).getSupportActionBar()).show();
 

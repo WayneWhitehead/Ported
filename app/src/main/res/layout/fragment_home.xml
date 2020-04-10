@@ -51,8 +51,8 @@
                     android:visibility="gone"
                     android:inputType="textPostalAddress"
                     android:backgroundTint="@color/colorPrimary"
-                    android:textColorHint="@color/colorAccent"
-                    android:textColor="@android:color/black"
+                    android:textColorHint="@color/whiteText"
+                    android:textColor="@android:color/white"
                     android:textSize="18sp"
                     android:imeOptions="actionSearch" />
 
@@ -63,8 +63,8 @@
                     android:layout_width="match_parent"
                     android:inputType="textPostalAddress"
                     android:backgroundTint="@color/colorPrimary"
-                    android:textColorHint="@color/colorAccent"
-                    android:textColor="@android:color/black"
+                    android:textColorHint="@color/whiteText"
+                    android:textColor="@android:color/white"
                     android:textSize="18sp"
                     android:imeOptions="actionSearch" />
             </LinearLayout>

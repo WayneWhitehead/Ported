@@ -376,6 +376,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             fusedLocationClient.removeLocationUpdates(locationCallback);
             tomtomMap.getDrivingSettings().stopTracking();
             tomtomMap.clear();
+            requestingLocationUpdates = false;
         }
     }
 
@@ -451,6 +452,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private void startLocationUpdates() {
         LocationRequest locationRequest = LocationRequest.create().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY).setFastestInterval(10).setInterval(100);
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
+        requestingLocationUpdates = true;
     }
 
     @Override
