@@ -30,9 +30,11 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.measurement.module.Analytics;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.common.base.Preconditions;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -87,28 +89,31 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private static final int PERMISSION_REQUEST_LOCATION = 0;
     private Boolean requestingLocationUpdates = false;
     private Location uLocation;
-    private TomtomMap tomtomMap;
     private LatLng latLngCurrentPosition, latLngDeparture, latLngDestination;
     private LocationCallback locationCallback;
+
+    private TomtomMap tomtomMap;
+    private Matcher matcher;
+    private Chevron chevron;
+    private SearchApi searchApi;
+
     private Functions func = new Functions();
+
     private DatabaseReference mDatabase;
+    private FirebaseAnalytics mFirebaseAnalytics;
+    private FusedLocationProviderClient fusedLocationClient;
 
     private BottomSheetDialog bottomSheetDialog;
     private View vBottomSheet;
     private AutoCompleteTextView _OriginLocationSearch, _DestinationLocationSearch;
     private MaterialButtonToggleGroup modeOfTransport;
 
-    private SearchApi searchApi;
     private final Handler searchTimerHandler = new Handler();
     private Runnable searchRunnable;
     private ArrayAdapter<String> searchAdapter;
     private List<String> searchAutocompleteList = new ArrayList<>();
     private Map<String, LatLng> searchResultsMap = new HashMap<>();
 
-    private Matcher matcher;
-    private Chevron chevron;
-
-    private FusedLocationProviderClient fusedLocationClient;
     private final OnMapReadyCallback onMapReadyCallback = new OnMapReadyCallback() {
         @Override
         public void onMapReady(@NotNull TomtomMap map) {
@@ -126,6 +131,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_home, container, false);
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(getActivity());
+        mFirebaseAnalytics.setCurrentScreen(getActivity(), "Home Fragment", "MapView");
 
         Objects.requireNonNull(((AppCompatActivity) Objects.requireNonNull(getActivity())).getSupportActionBar()).hide();
         ImageView openDrawer = root.findViewById(R.id.drawerButton);

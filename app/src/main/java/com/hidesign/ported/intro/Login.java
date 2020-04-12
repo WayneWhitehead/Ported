@@ -18,6 +18,7 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
@@ -36,10 +37,13 @@ public class Login extends Fragment {
     private TextInputEditText _username, _password;
     private static final int RC_SIGN_IN = 9001;
     private GoogleSignInClient mGoogleSignInClient;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.fragment_login, container, false);
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(getActivity());
+        mFirebaseAnalytics.setCurrentScreen(getActivity(), "Login Fragment", "Login");
 
         mAuth = FirebaseAuth.getInstance();
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestIdToken(getString(R.string.default_web_client_id)).requestEmail().build();
@@ -63,6 +67,9 @@ public class Login extends Fragment {
                     .addOnCompleteListener(Objects.requireNonNull(getActivity()), task -> {
                         if (task.isSuccessful()) {
                             Timber.d("signInWithEmail:success");
+                            Bundle params = new Bundle();
+                            params.putString("User", mAuth.getCurrentUser().getEmail());
+                            mFirebaseAnalytics.logEvent("loginWithEmail", params);
                             GoToMain();
                         } else {
                             Timber.tag("Login").w(task.getException(), "signInWithEmail:failure");
@@ -100,6 +107,9 @@ public class Login extends Fragment {
         mAuth.signInWithCredential(credential).addOnCompleteListener(Objects.requireNonNull(getActivity()), task -> {
             if (task.isSuccessful()) {
                 Timber.tag("GoogleSignIn").e("signInWithCredential:success");
+                Bundle params = new Bundle();
+                params.putString("User", mAuth.getCurrentUser().getEmail());
+                mFirebaseAnalytics.logEvent("loginWithGoogle", params);
                 GoToMain();
             } else {
                 Timber.tag("GoogleSignIn").e(task.getException(), "signInWithCredential:failure");
