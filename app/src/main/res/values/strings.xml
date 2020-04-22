@@ -40,4 +40,8 @@
     <string name="driving">Driving</string>
     <string name="public_string">Public</string>
     <string name="walking">Walking</string>
+    <string name="temp_direction_string">Right turn onto The Drive</string>
+    <string name="temp_distance">300m</string>
+    <string name="arrive_at">Arrive at:</string>
+    <string name="temp_time">13:33</string>
 </resources>

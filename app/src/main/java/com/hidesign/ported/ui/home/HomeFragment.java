@@ -30,10 +30,8 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.measurement.module.Analytics;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButtonToggleGroup;
-import com.google.common.base.Preconditions;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -46,9 +44,11 @@ import com.tomtom.online.sdk.common.location.LatLng;
 import com.tomtom.online.sdk.common.location.LatLngAcc;
 import com.tomtom.online.sdk.common.permission.AndroidPermissionChecker;
 import com.tomtom.online.sdk.common.permission.PermissionChecker;
+import com.tomtom.online.sdk.map.CameraPosition;
 import com.tomtom.online.sdk.map.Chevron;
 import com.tomtom.online.sdk.map.ChevronBuilder;
 import com.tomtom.online.sdk.map.Icon;
+import com.tomtom.online.sdk.map.MapConstants;
 import com.tomtom.online.sdk.map.MapFragment;
 import com.tomtom.online.sdk.map.MarkerBuilder;
 import com.tomtom.online.sdk.map.OnMapReadyCallback;
@@ -61,6 +61,8 @@ import com.tomtom.online.sdk.map.model.MapTilesType;
 import com.tomtom.online.sdk.routing.OnlineRoutingApi;
 import com.tomtom.online.sdk.routing.RoutingApi;
 import com.tomtom.online.sdk.routing.data.FullRoute;
+import com.tomtom.online.sdk.routing.data.Instruction;
+import com.tomtom.online.sdk.routing.data.InstructionsType;
 import com.tomtom.online.sdk.routing.data.RouteQuery;
 import com.tomtom.online.sdk.routing.data.RouteQueryBuilder;
 import com.tomtom.online.sdk.routing.data.RouteResponse;
@@ -73,9 +75,14 @@ import com.tomtom.online.sdk.search.data.fuzzy.FuzzySearchResult;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -123,6 +130,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             tomtomMap.getTrafficSettings().turnOnVectorTrafficFlowTiles();
             tomtomMap.getTrafficSettings().turnOnVectorTrafficIncidents();
 
+            tomtomMap.addOnMapLongClickListener(latLng -> newMarker(latLng));
             tomtomMap.addOnMarkerClickListener(marker -> setRoutePlanner(marker.getPosition()));
 
             getLastKnownLocation();
@@ -131,19 +139,19 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_home, container, false);
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(getActivity());
-        mFirebaseAnalytics.setCurrentScreen(getActivity(), "Home Fragment", "MapView");
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());
+        mFirebaseAnalytics.setCurrentScreen(requireActivity(), "Home Fragment", "MapView");
 
-        Objects.requireNonNull(((AppCompatActivity) Objects.requireNonNull(getActivity())).getSupportActionBar()).hide();
+        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).hide();
         ImageView openDrawer = root.findViewById(R.id.drawerButton);
         openDrawer.setOnClickListener(v -> {
-            DrawerLayout navDrawer = getActivity().findViewById(R.id.drawer_layout);
+            DrawerLayout navDrawer = requireActivity().findViewById(R.id.drawer_layout);
             navDrawer.openDrawer(GravityCompat.START);
         });
 
         initLocationSource();
 
-        searchApi = OnlineSearchApi.create(Objects.requireNonNull(getActivity()));
+        searchApi = OnlineSearchApi.create(requireActivity());
 
         MapFragment mapFragment = (MapFragment) getChildFragmentManager().findFragmentById(R.id.map_fragment);
         if (mapFragment != null) {
@@ -152,7 +160,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
         _OriginLocationSearch = root.findViewById(R.id.atv_main_departure_location);
         _DestinationLocationSearch = root.findViewById(R.id.atv_main_destination_location);
-        searchAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, searchAutocompleteList);
+        searchAdapter = new ArrayAdapter<>(requireActivity(), android.R.layout.simple_dropdown_item_1line, searchAutocompleteList);
         setTextWatcherToAutoCompleteField(_OriginLocationSearch);
         setTextWatcherToAutoCompleteField(_DestinationLocationSearch);
 
@@ -254,7 +262,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             ((ViewGroup) vBottomSheet.getParent()).removeView(vBottomSheet);
         }
         bottomSheetDialog = null;
-        bottomSheetDialog = new BottomSheetDialog(Objects.requireNonNull(getActivity()));
+        bottomSheetDialog = new BottomSheetDialog(requireActivity());
         bottomSheetDialog.setContentView(vBottomSheet);
 
         if (!bottomSheetDialog.isShowing()){
@@ -293,7 +301,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             ((ViewGroup) vBottomSheet.getParent()).removeView(vBottomSheet);
         }
         bottomSheetDialog = null;
-        bottomSheetDialog = new BottomSheetDialog(Objects.requireNonNull(getActivity()));
+        bottomSheetDialog = new BottomSheetDialog(requireActivity());
         bottomSheetDialog.setContentView(vBottomSheet);
 
         if (!bottomSheetDialog.isShowing()){
@@ -326,8 +334,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void startNavigation(FullRoute route){
-        Icon activeIcon = Icon.Factory.fromResources(Objects.requireNonNull(getContext()), R.drawable.chevron_color, 2.5);
-        Icon inactiveIcon = Icon.Factory.fromResources(getContext(), R.drawable.chevron_shadow, 2.5);
+        Icon activeIcon = Icon.Factory.fromResources(requireContext(), R.drawable.chevron_color, 2.5);
+        Icon inactiveIcon = Icon.Factory.fromResources(requireContext(), R.drawable.chevron_shadow, 2.5);
         ChevronBuilder chevronBuilder = ChevronBuilder.create(activeIcon, inactiveIcon);
         chevron = tomtomMap.getDrivingSettings().addChevron(chevronBuilder);
         chevron.setLocation(uLocation);
@@ -340,9 +348,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
-                if (locationResult == null) {
-                    return;
-                }
+                if (locationResult == null) { return; }
                 for (Location location : locationResult.getLocations()) {
                     matcher.match(location);
                 }
@@ -352,10 +358,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         tomtomMap.getDrivingSettings().startTracking(chevron);
 
         //Updating Ui for navigation
-        Objects.requireNonNull(getActivity()).findViewById(R.id.searchViews).setVisibility(View.GONE);
-        getActivity().findViewById(R.id.navigationBar).setVisibility(View.VISIBLE);
-        ImageView cancel = getActivity().findViewById(R.id.cancelNavigation);
-        cancel.setOnClickListener(v -> stopNavigation());
+        requireActivity().findViewById(R.id.searchViews).setVisibility(View.GONE);
+        requireActivity().findViewById(R.id.navigationBar).setVisibility(View.VISIBLE);
+        ImageView _cancel = requireActivity().findViewById(R.id.cancelNavigation);
+        _cancel.setOnClickListener(v -> stopNavigation());
 
         //Uploading trip data to firebase
         int size = route.getCoordinates().size()-1;
@@ -367,11 +373,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 System.currentTimeMillis(),
                 route.getSummary().getLengthInMeters());
         mDatabase.child("Trips").child(UUID.randomUUID().toString()).setValue(temp);
+        //End Uploading to firebase
     }
 
     private void stopNavigation(){
-        Objects.requireNonNull(getActivity()).findViewById(R.id.searchViews).setVisibility(View.VISIBLE);
-        getActivity().findViewById(R.id.navigationBar).setVisibility(View.GONE);
+        requireActivity().findViewById(R.id.searchViews).setVisibility(View.VISIBLE);
+        requireActivity().findViewById(R.id.navigationBar).setVisibility(View.GONE);
         _DestinationLocationSearch.setText("");
 
         if (requestingLocationUpdates){
@@ -389,11 +396,40 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void createMatcher(FullRoute route) {
-        Preconditions.checkArgument(tomtomMap.getRoutes().size() > 0);
+        TextView _navigationText = requireActivity().findViewById(R.id.nextTurn);
+        _navigationText.setText(route.getGuidance().getInstructions()[0].getMessage());
+
+        TextView _timeLeft = requireActivity().findViewById(R.id.timeLeft);
+        DateFormat simple = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+        Date result = Objects.requireNonNull(route.getSummary().getArrivalTimeWithZone()).toDate();
+        _timeLeft.setText(simple.format(result));
+
+        TextView _turnDistance = requireActivity().findViewById(R.id.distanceToNextTurn);
+
+        List<Integer> instructionIndex = new ArrayList<>();
+        instructionIndex.add(0);
+
         matcher = MatcherFactory.createMatcher(LatLngTraceMatchingDataProvider.fromPoints(route.getCoordinates()));
         matcher.setMatcherListener(matchResult -> {
             chevron.setDimmed(!matchResult.isMatched());
             chevron.setLocation(matchResult.getMatchedLocation());
+
+            List<Instruction> instructions = Arrays.asList(route.getGuidance().getInstructions());
+            _turnDistance.setText(func.distanceToNextTurn(matchResult.getMatchedLocation().distanceTo(instructions.get(instructionIndex.get(0)).getPoint().toLocation())));
+            double lat = Double.parseDouble(String.format(Locale.ENGLISH, "%.4f", matchResult.getMatchedLocation().getLatitude()));
+            double lon = Double.parseDouble(String.format(Locale.ENGLISH, "%.4f", matchResult.getMatchedLocation().getLongitude()));
+            LatLng temp = new LatLng(lat, lon);
+
+            for ( int i = 0; i < instructions.size(); i++){
+                lat = Double.parseDouble(String.format(Locale.ENGLISH, "%.4f", instructions.get(i).getPoint().getLatitude()));
+                lon = Double.parseDouble(String.format(Locale.ENGLISH, "%.4f", instructions.get(i).getPoint().getLongitude()));
+                LatLng temp2 = new LatLng(lat, lon);
+                if (temp.getLatitude() == temp2.getLatitude() && temp.getLongitude() == temp2.getLongitude()){
+                    _navigationText.setText(instructions.get(i+1).getMessage());
+                    instructionIndex.clear();
+                    instructionIndex.add(i+1);
+                }
+            }
             chevron.show();
         });
     }
@@ -401,14 +437,17 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private void newMarker(LatLng location){
         tomtomMap.clear();
         tomtomMap.addMarker(new MarkerBuilder(location));
-        tomtomMap.centerOn(location.getLatitude(), location.getLongitude(), 15);
+        tomtomMap.centerOn(location.getLatitude(), location.getLongitude(), 15, MapConstants.ORIENTATION_NORTH);
         setRoutePlanner(location);
     }
 
     private void newRoute(LatLng start, LatLng end, TravelMode transport){
-        RoutingApi routingApi = OnlineRoutingApi.create(Objects.requireNonNull(getActivity()));
+        RoutingApi routingApi = OnlineRoutingApi.create(requireActivity());
 
-        RouteQuery routeQuery = new RouteQueryBuilder(start, end).withConsiderTraffic(true).withTravelMode(transport).build();
+        RouteQuery routeQuery = new RouteQueryBuilder(start, end)
+                .withInstructionsType(InstructionsType.TEXT)
+                .withConsiderTraffic(true)
+                .withTravelMode(transport).build();
 
         routingApi.planRoute(routeQuery).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread()).subscribe(new DisposableSingleObserver<RouteResponse>() {
             @Override
@@ -418,14 +457,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
                     //builds the route on the map and displays for the user
                     RouteBuilder routeBuilder = new RouteBuilder(fullRoute.getCoordinates());
-                    fullRoute.getGuidance();
                     tomtomMap.addRoute(routeBuilder);
                     tomtomMap.displayRoutesOverview();
 
                     //dismisses the route planner bottom sheet and creates the navigation sheet
                     bottomSheetDialog.dismiss();
                     setNavigation(fullRoute);
-
                     //when user clicks on the route it brings the bottom sheet back up
                     tomtomMap.addOnRouteClickListener(route -> setNavigation(fullRoute));
                 }
@@ -438,17 +475,17 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void initLocationSource() {
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(Objects.requireNonNull(getActivity()));
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
 
         PermissionChecker permissionChecker = AndroidPermissionChecker.createLocationChecker(getActivity());
         if(permissionChecker.ifNotAllPermissionGranted()) {
-            ActivityCompat.requestPermissions(Objects.requireNonNull(getActivity()), new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
+            ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
                     Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_LOCATION);
         }
     }
 
     private void getLastKnownLocation(){
-        fusedLocationClient.getLastLocation().addOnSuccessListener(Objects.requireNonNull(getActivity()), location -> {
+        fusedLocationClient.getLastLocation().addOnSuccessListener(requireActivity(), location -> {
             if (location != null) {
                 uLocation = location;
                 latLngCurrentPosition = new LatLng(location.getLatitude(), location.getLongitude());
