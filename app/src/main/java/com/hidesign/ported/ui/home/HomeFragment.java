@@ -34,7 +34,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.hidesign.ported.Functions;
@@ -44,7 +43,6 @@ import com.tomtom.online.sdk.common.location.LatLng;
 import com.tomtom.online.sdk.common.location.LatLngAcc;
 import com.tomtom.online.sdk.common.permission.AndroidPermissionChecker;
 import com.tomtom.online.sdk.common.permission.PermissionChecker;
-import com.tomtom.online.sdk.map.CameraPosition;
 import com.tomtom.online.sdk.map.Chevron;
 import com.tomtom.online.sdk.map.ChevronBuilder;
 import com.tomtom.online.sdk.map.Icon;
@@ -96,7 +94,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private static final int PERMISSION_REQUEST_LOCATION = 0;
     private Boolean requestingLocationUpdates = false;
     private Location uLocation;
-    private LatLng latLngCurrentPosition, latLngDeparture, latLngDestination;
+    private LatLng latLngCurrentPosition, latLngDestination;
     private LocationCallback locationCallback;
 
     private TomtomMap tomtomMap;
@@ -107,7 +105,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private Functions func = new Functions();
 
     private DatabaseReference mDatabase;
-    private FirebaseAnalytics mFirebaseAnalytics;
     private FusedLocationProviderClient fusedLocationClient;
 
     private BottomSheetDialog bottomSheetDialog;
@@ -127,6 +124,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             tomtomMap = map;
             tomtomMap.setMyLocationEnabled(true);
             tomtomMap.getUiSettings().setMapTilesType(MapTilesType.VECTOR);
+            tomtomMap.getUiSettings().getCompassView().hide();
             tomtomMap.getTrafficSettings().turnOnVectorTrafficFlowTiles();
             tomtomMap.getTrafficSettings().turnOnVectorTrafficIncidents();
 
@@ -139,52 +137,33 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_home, container, false);
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());
+        FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());
         mFirebaseAnalytics.setCurrentScreen(requireActivity(), "Home Fragment", "MapView");
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        if (mAuth.getCurrentUser() != null) {
+            mDatabase = FirebaseDatabase.getInstance().getReference().child(mAuth.getCurrentUser().getUid());
+        }
 
         Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).hide();
         ImageView openDrawer = root.findViewById(R.id.drawerButton);
-        openDrawer.setOnClickListener(v -> {
-            DrawerLayout navDrawer = requireActivity().findViewById(R.id.drawer_layout);
-            navDrawer.openDrawer(GravityCompat.START);
-        });
+        DrawerLayout navDrawer = requireActivity().findViewById(R.id.drawer_layout);
+        openDrawer.setOnClickListener(v -> navDrawer.openDrawer(GravityCompat.START));
 
         initLocationSource();
-
-        searchApi = OnlineSearchApi.create(requireActivity());
 
         MapFragment mapFragment = (MapFragment) getChildFragmentManager().findFragmentById(R.id.map_fragment);
         if (mapFragment != null) {
             mapFragment.getAsyncMap(onMapReadyCallback);
         }
 
+        searchApi = OnlineSearchApi.create(requireActivity());
         _OriginLocationSearch = root.findViewById(R.id.atv_main_departure_location);
         _DestinationLocationSearch = root.findViewById(R.id.atv_main_destination_location);
         searchAdapter = new ArrayAdapter<>(requireActivity(), android.R.layout.simple_dropdown_item_1line, searchAutocompleteList);
-        setTextWatcherToAutoCompleteField(_OriginLocationSearch);
+        //setTextWatcherToAutoCompleteField(_OriginLocationSearch);
         setTextWatcherToAutoCompleteField(_DestinationLocationSearch);
 
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null) {
-            mDatabase = FirebaseDatabase.getInstance().getReference().child(currentUser.getUid());
-        }
-
         return root;
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == PERMISSION_REQUEST_LOCATION) {
-            if (grantResults.length >= 2 &&
-                    grantResults[0] == PackageManager.PERMISSION_GRANTED &&
-                    grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                getLastKnownLocation();
-            } else {
-                Toast.makeText(getActivity(), "Location Access Denied", Toast.LENGTH_SHORT).show();
-            }
-        }
     }
 
     private void setTextWatcherToAutoCompleteField(final AutoCompleteTextView autoCompleteTextView) {
@@ -208,12 +187,15 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         });
         autoCompleteTextView.setOnItemClickListener((parent, view, position, id) -> {
             String item = (String) parent.getItemAtPosition(position);
-            if (autoCompleteTextView == _OriginLocationSearch) {
-                latLngDeparture = searchResultsMap.get(item);
-            } else if (autoCompleteTextView == _DestinationLocationSearch) {
-                latLngDestination = searchResultsMap.get(item);
-                newMarker(latLngDestination);
+            if (autoCompleteTextView != _OriginLocationSearch) {
+                if (autoCompleteTextView == _DestinationLocationSearch) {
+                    latLngDestination = searchResultsMap.get(item);
+                    newMarker(latLngDestination);
+                }
             }
+//            else {
+//                latLngDeparture = searchResultsMap.get(item);
+//            }
         });
     }
 
@@ -463,6 +445,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                     //dismisses the route planner bottom sheet and creates the navigation sheet
                     bottomSheetDialog.dismiss();
                     setNavigation(fullRoute);
+
                     //when user clicks on the route it brings the bottom sheet back up
                     tomtomMap.addOnRouteClickListener(route -> setNavigation(fullRoute));
                 }
@@ -479,8 +462,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
         PermissionChecker permissionChecker = AndroidPermissionChecker.createLocationChecker(getActivity());
         if(permissionChecker.ifNotAllPermissionGranted()) {
-            ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
-                    Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_LOCATION);
+            ActivityCompat.requestPermissions(
+                    requireActivity(),
+                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION},
+                    PERMISSION_REQUEST_LOCATION);
         }
     }
 
@@ -498,6 +483,20 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         LocationRequest locationRequest = LocationRequest.create().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY).setFastestInterval(10).setInterval(100);
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
         requestingLocationUpdates = true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PERMISSION_REQUEST_LOCATION) {
+            if (grantResults.length >= 2 &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                    grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                getLastKnownLocation();
+            } else {
+                Toast.makeText(getActivity(), "Location Access Denied", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     @Override
