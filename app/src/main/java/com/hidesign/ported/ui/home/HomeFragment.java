@@ -160,7 +160,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         _OriginLocationSearch = root.findViewById(R.id.atv_main_departure_location);
         _DestinationLocationSearch = root.findViewById(R.id.atv_main_destination_location);
         searchAdapter = new ArrayAdapter<>(requireActivity(), android.R.layout.simple_dropdown_item_1line, searchAutocompleteList);
-        //setTextWatcherToAutoCompleteField(_OriginLocationSearch);
+        setTextWatcherToAutoCompleteField(_OriginLocationSearch);
         setTextWatcherToAutoCompleteField(_DestinationLocationSearch);
 
         return root;
@@ -178,7 +178,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             public void afterTextChanged(final Editable s) {
                 if (s.length() > 0) {
                     if (s.length() >= 4) {
-                        searchRunnable = () -> searchAddress(s.toString(), autoCompleteTextView);
+                        searchRunnable = () -> searchAddress(s.toString());
                         searchAdapter.clear();
                         searchTimerHandler.postDelayed(searchRunnable, 800);
                     }
@@ -187,36 +187,24 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         });
         autoCompleteTextView.setOnItemClickListener((parent, view, position, id) -> {
             String item = (String) parent.getItemAtPosition(position);
-            if (autoCompleteTextView != _OriginLocationSearch) {
-                if (autoCompleteTextView == _DestinationLocationSearch) {
-                    latLngDestination = searchResultsMap.get(item);
-                    newMarker(latLngDestination);
-                }
+            if (autoCompleteTextView == _DestinationLocationSearch) {
+                latLngDestination = searchResultsMap.get(item);
+                newMarker(latLngDestination);
             }
-//            else {
-//                latLngDeparture = searchResultsMap.get(item);
-//            }
         });
     }
 
-    private void searchAddress(final String searchWord, final AutoCompleteTextView autoCompleteTextView) {
-        searchApi.search(new FuzzySearchQueryBuilder(searchWord)
-                .withTypeAhead(true)
-                .withMinFuzzyLevel(2)
+    private void searchAddress(final String searchWord) {
+        searchApi.search(new FuzzySearchQueryBuilder(searchWord).withTypeAhead(true).withMinFuzzyLevel(2)
                 .withPreciseness(new LatLngAcc(latLngCurrentPosition, 300000)).build())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new DisposableSingleObserver<FuzzySearchResponse>() {
                     @Override
                     public void onSuccess(FuzzySearchResponse fuzzySearchResponse) {
                         if (!fuzzySearchResponse.getResults().isEmpty()) {
                             searchAutocompleteList.clear();
                             searchResultsMap.clear();
-                            if (autoCompleteTextView == _OriginLocationSearch && latLngCurrentPosition != null) {
-                                String currentLocationTitle = "Your location";
-                                searchAutocompleteList.add(currentLocationTitle);
-                                searchResultsMap.put(currentLocationTitle, latLngCurrentPosition);
-                            }
+                            
                             for (FuzzySearchResult result : fuzzySearchResponse.getResults()) {
                                 String addressString = result.getAddress().getFreeformAddress();
                                 searchAutocompleteList.add(addressString);
