@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.hidesign.ported.R;
 
 import java.util.ArrayList;
@@ -19,6 +20,9 @@ public class LoginRegister extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_register);
+
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        mAuth.signOut();
 
         ViewPager viewPager = findViewById(R.id.viewPager);
 

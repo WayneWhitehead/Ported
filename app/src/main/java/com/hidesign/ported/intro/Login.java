@@ -42,12 +42,12 @@ public class Login extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.fragment_login, container, false);
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(getActivity());
-        mFirebaseAnalytics.setCurrentScreen(getActivity(), "Login Fragment", "Login");
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());
+        mFirebaseAnalytics.setCurrentScreen(requireActivity(), "Login Fragment", "Login");
 
         mAuth = FirebaseAuth.getInstance();
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestIdToken(getString(R.string.default_web_client_id)).requestEmail().build();
-        mGoogleSignInClient = GoogleSignIn.getClient(Objects.requireNonNull(getActivity()), gso);
+        mGoogleSignInClient = GoogleSignIn.getClient(requireActivity(), gso);
 
         _username = layout.findViewById(R.id.username);
         _password = layout.findViewById(R.id.password);
@@ -64,11 +64,11 @@ public class Login extends Fragment {
     private void CheckLogin(){
         if (Validate()){
             mAuth.signInWithEmailAndPassword(Objects.requireNonNull(_username.getText()).toString(), Objects.requireNonNull(_password.getText()).toString())
-                    .addOnCompleteListener(Objects.requireNonNull(getActivity()), task -> {
+                    .addOnCompleteListener(requireActivity(), task -> {
                         if (task.isSuccessful()) {
                             Timber.d("signInWithEmail:success");
                             Bundle params = new Bundle();
-                            params.putString("User", mAuth.getCurrentUser().getEmail());
+                            params.putString("User", Objects.requireNonNull(mAuth.getCurrentUser()).getEmail());
                             mFirebaseAnalytics.logEvent("loginWithEmail", params);
                             GoToMain();
                         } else {
@@ -104,11 +104,11 @@ public class Login extends Fragment {
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Timber.tag("GoogleSignin").e("firebaseAuthWithGoogle:%s", acct.getId());
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
-        mAuth.signInWithCredential(credential).addOnCompleteListener(Objects.requireNonNull(getActivity()), task -> {
+        mAuth.signInWithCredential(credential).addOnCompleteListener(requireActivity(), task -> {
             if (task.isSuccessful()) {
                 Timber.tag("GoogleSignIn").e("signInWithCredential:success");
                 Bundle params = new Bundle();
-                params.putString("User", mAuth.getCurrentUser().getEmail());
+                params.putString("User", Objects.requireNonNull(mAuth.getCurrentUser()).getEmail());
                 mFirebaseAnalytics.logEvent("loginWithGoogle", params);
                 GoToMain();
             } else {
@@ -133,6 +133,6 @@ public class Login extends Fragment {
     private void GoToMain(){
         Intent intent = new Intent(getContext(), MainActivity.class);
         startActivityForResult(intent, RESULT_OK);
-        Objects.requireNonNull(getActivity()).finish();
+        requireActivity().finish();
     }
 }

@@ -109,7 +109,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     private BottomSheetDialog bottomSheetDialog;
     private View vBottomSheet;
-    private AutoCompleteTextView _OriginLocationSearch, _DestinationLocationSearch;
+    private AutoCompleteTextView _DestinationLocationSearch;
     private MaterialButtonToggleGroup modeOfTransport;
 
     private final Handler searchTimerHandler = new Handler();
@@ -137,6 +137,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_home, container, false);
+
         FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());
         mFirebaseAnalytics.setCurrentScreen(requireActivity(), "Home Fragment", "MapView");
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -157,10 +158,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         }
 
         searchApi = OnlineSearchApi.create(requireActivity());
-        _OriginLocationSearch = root.findViewById(R.id.atv_main_departure_location);
         _DestinationLocationSearch = root.findViewById(R.id.atv_main_destination_location);
         searchAdapter = new ArrayAdapter<>(requireActivity(), android.R.layout.simple_dropdown_item_1line, searchAutocompleteList);
-        setTextWatcherToAutoCompleteField(_OriginLocationSearch);
         setTextWatcherToAutoCompleteField(_DestinationLocationSearch);
 
         return root;

@@ -44,4 +44,5 @@
     <string name="temp_distance">300m</string>
     <string name="arrive_at">Arrive at:</string>
     <string name="temp_time">13:33</string>
+    <string name="logout">Logout</string>
 </resources>
