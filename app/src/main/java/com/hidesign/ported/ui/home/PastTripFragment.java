@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -38,7 +37,7 @@ public class PastTripFragment extends Fragment {
     private List<Trips> pastTrips = new ArrayList<>();
     private Functions func = new Functions();
     private DatabaseReference mDatabase;
-    private ProgressBar mProgressBar;
+    private View mProgressBar;
 
     public PastTripFragment(){}
 
@@ -46,7 +45,7 @@ public class PastTripFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View viewInflate = inflater.inflate(R.layout.fragment_past_trips, container, false);
 
-        Objects.requireNonNull(((AppCompatActivity) Objects.requireNonNull(getActivity())).getSupportActionBar()).show();
+        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).show();
 
         mProgressBar = viewInflate.findViewById(R.id.progress_bar);
 
@@ -89,7 +88,7 @@ public class PastTripFragment extends Fragment {
     private void showList(List<Trips> display) {
         Timber.tag(TAG).e("showList: %s", pastTrips.size());
 
-        RecyclerAdapter mAdapter = new RecyclerAdapter(display.size(), R.layout.past_trip_entry);
+        RecyclerAdapter mAdapter = new RecyclerAdapter(display.size(), R.layout.item_trip);
         mAdapter.setOnRecyclerAdapterListener((adapter, v, position) -> {
 
             TextView _Date = v.view.findViewById(R.id.Date);

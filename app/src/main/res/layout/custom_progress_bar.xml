@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#80000000"
+    android:backgroundTint="#80000000">
+
+    <ProgressBar
+        android:layout_width="190dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/redPrimary"
+        android:max="100"
+        android:rotation="45" />
+
+    <ProgressBar
+        android:layout_width="180dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/colorPrimary"
+        android:max="100"
+        android:rotation="30" />
+
+    <ProgressBar
+        android:layout_width="170dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/greenPrimary"
+        android:max="100"
+        android:rotation="15" />
+
+    <ProgressBar
+        android:layout_width="160dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/yellowPrimary"
+        android:max="100" />
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="130dp"
+        android:layout_height="130dp"
+        android:layout_gravity="center"
+        android:contentDescription="@string/logo"
+        android:src="@drawable/logo_circle" />
+
+</FrameLayout>

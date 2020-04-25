@@ -4,9 +4,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:backgroundTint="@color/redPrimary"
     android:layout_marginVertical="10dp"
     android:layout_marginHorizontal="15dp"
+    app:rippleColor="#000000"
+    app:cardElevation="20dp"
     app:cardCornerRadius="20dp">
 
     <LinearLayout
@@ -17,18 +18,18 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:background="#2E2E2E"
             android:gravity="center"
-            android:padding="10dp"
-            android:background="@android:color/white">
+            android:orientation="vertical"
+            android:padding="10dp">
 
             <TextView
                 android:id="@+id/Date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAlignment="center"
-                android:textColor="@android:color/black"
                 android:text="@string/default_date"
+                android:textAlignment="center"
+                android:textColor="@android:color/white"
                 android:textSize="20sp" />
 
         </LinearLayout>
@@ -46,6 +47,7 @@
                 android:layout_weight="0.7"
                 android:padding="10dp"
                 android:gravity="center"
+                android:background="@color/redPrimary"
                 android:orientation="vertical">
 
                 <TextView
@@ -86,6 +88,11 @@
                 android:gravity="center"
                 android:background="@color/redPrimaryDark"
                 android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    />
 
                 <LinearLayout
                     android:layout_width="wrap_content"

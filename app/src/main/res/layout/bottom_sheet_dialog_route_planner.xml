@@ -45,15 +45,14 @@
             android:layout_height="60dp"
             android:layout_weight="0.33"
             android:text="@string/driving"
-            android:foregroundTint="@color/colorPrimary"
-            style="?attr/materialButtonOutlinedStyle" />
+            style="@style/ToggleButtons"/>
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button2"
             android:layout_width="0dp"
             android:layout_height="60dp"
             android:layout_weight="0.33"
             android:text="@string/public_string"
-            style="?attr/materialButtonOutlinedStyle" />
+            style="@style/ToggleButtons"/>
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button3"
             android:layout_width="0dp"
@@ -61,7 +60,7 @@
             android:layout_weight="0.33"
             android:text="@string/walking"
             app:iconSize="30dp"
-            style="?attr/materialButtonOutlinedStyle" />
+            style="@style/ToggleButtons"/>
     </com.google.android.material.button.MaterialButtonToggleGroup>
 
     <com.google.android.material.button.MaterialButton
@@ -69,22 +68,14 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:backgroundTint="@color/colorPrimary"
-        app:rippleColor="@color/colorPrimaryDark"
-        android:insetTop="0dp"
-        android:insetBottom="0dp"
         android:text="@string/get_directions"
-        android:textColor="@android:color/white"
-        app:cornerRadius="0dp" />
+        style="@style/BottomSheetButtons" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/buttonCancel"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        app:rippleColor="@android:color/black"
-        android:backgroundTint="@color/colorPrimaryDark"
-        android:insetTop="0dp"
-        android:insetBottom="0dp"
+        app:backgroundTint="@color/colorPrimaryDark"
         android:text="@string/cancel"
-        android:textColor="@android:color/white"
-        app:cornerRadius="0dp" />
+        style="@style/BottomSheetButtons" />
 </LinearLayout>
