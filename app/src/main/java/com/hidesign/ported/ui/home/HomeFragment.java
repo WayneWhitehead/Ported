@@ -46,7 +46,6 @@ import com.tomtom.online.sdk.common.permission.PermissionChecker;
 import com.tomtom.online.sdk.map.Chevron;
 import com.tomtom.online.sdk.map.ChevronBuilder;
 import com.tomtom.online.sdk.map.Icon;
-import com.tomtom.online.sdk.map.MapConstants;
 import com.tomtom.online.sdk.map.MapFragment;
 import com.tomtom.online.sdk.map.MarkerBuilder;
 import com.tomtom.online.sdk.map.OnMapReadyCallback;
@@ -299,7 +298,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         } else {
             bottomSheetDialog.dismiss();
         }
-
     }
 
     private void startNavigation(FullRoute route){
@@ -406,7 +404,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private void newMarker(LatLng location){
         tomtomMap.clear();
         tomtomMap.addMarker(new MarkerBuilder(location));
-        tomtomMap.centerOn(location.getLatitude(), location.getLongitude(), 15, MapConstants.ORIENTATION_NORTH);
+        tomtomMap.centerOn(location.getLatitude(), location.getLongitude(), 15);
         setRoutePlanner(location);
     }
 
@@ -427,7 +425,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                     //builds the route on the map and displays for the user
                     RouteBuilder routeBuilder = new RouteBuilder(fullRoute.getCoordinates());
                     tomtomMap.addRoute(routeBuilder);
-                    tomtomMap.displayRoutesOverview();
+                    tomtomMap.displayRouteOverview(routeBuilder.getId());
 
                     //dismisses the route planner bottom sheet and creates the navigation sheet
                     bottomSheetDialog.dismiss();

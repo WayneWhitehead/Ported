@@ -33,12 +33,11 @@
         <activity
             android:name=".intro.LoginRegister"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".intro.SplashScreen"
-            android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
+        <activity android:name=".intro.SplashScreen"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter >
+                <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
