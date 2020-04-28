@@ -23,7 +23,7 @@ class LoginRegister : AppCompatActivity() {
         viewPager.adapter = pagerAdapter
     }
 
-    internal class AuthenticationPagerAdapter(fm: FragmentManager?) : FragmentPagerAdapter(fm!!) {
+    internal class AuthenticationPagerAdapter(fm: FragmentManager?) : FragmentPagerAdapter(fm!!, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT){
         private val fragmentList = ArrayList<Fragment>()
         override fun getItem(i: Int): Fragment {
             return fragmentList[i]
