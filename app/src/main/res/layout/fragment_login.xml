@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@android:color/primary_text_light_nodisable"
+    android:theme="@style/AppThemeYellow"
     tools:context=".intro.Login">
 
     <LinearLayout
@@ -27,7 +28,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginBottom="15dp"
-                android:text="LOGIN"
+                android:text="@string/login"
                 android:textColor="@android:color/black"
                 android:textSize="50sp" />
 
@@ -63,8 +64,8 @@
                 android:id="@+id/usernameTextField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:boxBackgroundColor="@android:color/primary_text_light_nodisable"
-                android:hint="Username">
+                android:hint="@string/username"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/username"
@@ -79,8 +80,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                app:boxBackgroundColor="@android:color/primary_text_light_nodisable"
-                android:hint="Password">
+                android:hint="@string/password"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/password"
@@ -98,7 +99,7 @@
                 android:layout_marginTop="15dp"
                 android:insetTop="3dp"
                 android:insetBottom="3dp"
-                android:text="SUBMIT"
+                android:text="@string/submit"
                 android:textColor="@android:color/black"
                 app:rippleColor="@color/yellowPrimaryDark" />
 
@@ -123,7 +124,7 @@
         android:layout_width="wrap_content"
         android:textColor="@android:color/white"
         android:layout_height="wrap_content"
-        android:text="Swipe left to register"
+        android:text="@string/swipe_left_to_register"
         android:textSize="15sp"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"

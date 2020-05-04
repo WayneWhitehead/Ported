@@ -1,40 +1,84 @@
 package com.hidesign.ported.intro
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentPagerAdapter
-import androidx.viewpager.widget.ViewPager
-import com.google.firebase.auth.FirebaseAuth
+import androidx.fragment.app.FragmentActivity
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
 import com.hidesign.ported.R
-import java.util.*
+import kotlin.math.abs
 
 class LoginRegister : AppCompatActivity() {
+
+    private lateinit var viewPager2: ViewPager2
+    private var currentFrag: Int = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login_register)
-        val mAuth = FirebaseAuth.getInstance()
-        mAuth.signOut()
-        val viewPager = findViewById<ViewPager>(R.id.viewPager)
-        val pagerAdapter = AuthenticationPagerAdapter(supportFragmentManager)
-        pagerAdapter.addFragment(Login())
-        pagerAdapter.addFragment(Register())
-        viewPager.adapter = pagerAdapter
+
+        viewPager2 = findViewById(R.id.viewPager)
+
+        val fragmentList = arrayListOf(Login(), Register())
+        viewPager2.adapter = ViewPagerAdapter(this, fragmentList)
+        viewPager2.setPageTransformer(DepthPageTransformer())
     }
 
-    internal class AuthenticationPagerAdapter(fm: FragmentManager?) : FragmentPagerAdapter(fm!!, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT){
-        private val fragmentList = ArrayList<Fragment>()
-        override fun getItem(i: Int): Fragment {
-            return fragmentList[i]
-        }
+    inner class ViewPagerAdapter(fa: FragmentActivity, private val fragments:ArrayList<Fragment>): FragmentStateAdapter(fa) {
+        override fun getItemCount(): Int = fragments.size
+        override fun createFragment(position: Int): Fragment = fragments[position]
+    }
 
-        override fun getCount(): Int {
-            return fragmentList.size
+    override fun onBackPressed() {
+        if (currentFrag == 0){
+            viewPager2.currentItem = 1
+            currentFrag = 1
+        } else {
+            viewPager2.currentItem = 0
+            currentFrag = 1
         }
+    }
 
-        fun addFragment(fragment: Fragment) {
-            fragmentList.add(fragment)
+    inner class DepthPageTransformer : ViewPager2.PageTransformer {
+
+        override fun transformPage(view: View, position: Float) {
+            view.apply {
+                val pageWidth = width
+                when {
+                    position < -1 -> { // [-Infinity,-1)
+                        // This page is way off-screen to the left.
+                        alpha = 0f
+                    }
+                    position <= 0 -> { // [-1,0]
+                        // Use the default slide transition when moving to the left page
+                        alpha = 1f
+                        translationX = 0f
+                        translationZ = 0f
+                        scaleX = 1f
+                        scaleY = 1f
+                    }
+                    position <= 1 -> { // (0,1]
+                        // Fade the page out.
+                        alpha = 1 - position
+
+                        // Counteract the default slide transition
+                        translationX = pageWidth * -position
+                        // Move it behind the left page
+                        translationZ = -1f
+
+                        // Scale the page down (between MIN_SCALE and 1)
+                        val scaleFactor = (0.75 + (1 - 0.75) * (1 - abs(position)))
+                        scaleX = scaleFactor.toFloat()
+                        scaleY = scaleFactor.toFloat()
+                    }
+                    else -> { // (1,+Infinity]
+                        // This page is way off-screen to the right.
+                        alpha = 0f
+                    }
+                }
+            }
         }
     }
 }

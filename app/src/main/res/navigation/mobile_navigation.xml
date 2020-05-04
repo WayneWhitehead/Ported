@@ -18,18 +18,8 @@
         tools:layout="@layout/fragment_past_trips" />
 
     <fragment
-        android:id="@+id/nav_settings"
-        android:name="com.hidesign.ported.ui.home.SettingsFragment"
-        android:label="@string/settings"
-        tools:layout="@layout/fragment_settings" />
-
-    <activity
-        android:id="@+id/loginRegister"
-        android:name="com.hidesign.ported.intro.LoginRegister"
-        android:label="activity_login_register"
-        tools:layout="@layout/activity_login_register" />
-
-    <action
-        android:id="@+id/nav_logout"
-        app:destination="@id/loginRegister" />
+        android:id="@+id/nav_profile"
+        android:name="com.hidesign.ported.ui.home.ProfileFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile" />
 </navigation>

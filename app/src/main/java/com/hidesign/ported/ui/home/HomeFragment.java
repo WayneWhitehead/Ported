@@ -95,6 +95,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private Location uLocation;
     private LatLng latLngCurrentPosition, latLngDestination;
     private LocationCallback locationCallback;
+    private DatabaseReference mDatabase;
+    private FusedLocationProviderClient fusedLocationClient;
 
     private TomtomMap tomtomMap;
     private Matcher matcher;
@@ -103,13 +105,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     private Functions func = new Functions();
 
-    private DatabaseReference mDatabase;
-    private FusedLocationProviderClient fusedLocationClient;
-
     private BottomSheetDialog bottomSheetDialog;
-    private View vBottomSheet;
     private AutoCompleteTextView _DestinationLocationSearch;
-    private MaterialButtonToggleGroup modeOfTransport;
 
     private final Handler searchTimerHandler = new Handler();
     private Runnable searchRunnable;
@@ -124,8 +121,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             tomtomMap.setMyLocationEnabled(true);
             tomtomMap.getUiSettings().setMapTilesType(MapTilesType.VECTOR);
             tomtomMap.getUiSettings().getCompassView().hide();
-            tomtomMap.getTrafficSettings().turnOnVectorTrafficFlowTiles();
-            tomtomMap.getTrafficSettings().turnOnVectorTrafficIncidents();
+            tomtomMap.getTrafficSettings().turnOnRasterTrafficFlowTiles();
+            tomtomMap.getTrafficSettings().turnOnRasterTrafficIncidents();
 
             tomtomMap.addOnMapLongClickListener(latLng -> newMarker(latLng));
             tomtomMap.addOnMarkerClickListener(marker -> setRoutePlanner(marker.getPosition()));
@@ -166,7 +163,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     private void setTextWatcherToAutoCompleteField(final AutoCompleteTextView autoCompleteTextView) {
         autoCompleteTextView.setAdapter(searchAdapter);
-        autoCompleteTextView.addTextChangedListener(new BaseTextWatcher() {
+        autoCompleteTextView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 searchTimerHandler.removeCallbacks(searchRunnable);
@@ -183,6 +185,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 }
             }
         });
+
         autoCompleteTextView.setOnItemClickListener((parent, view, position, id) -> {
             String item = (String) parent.getItemAtPosition(position);
             if (autoCompleteTextView == _DestinationLocationSearch) {
@@ -223,13 +226,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     @SuppressLint("InflateParams")
     private void setRoutePlanner(LatLng marker){
+        MaterialButtonToggleGroup transport;
+        View vBottomSheet;
         vBottomSheet = getLayoutInflater().inflate(R.layout.bottom_sheet_dialog_route_planner, null);
 
-        //Checks if the bottom sheet already exists and removes if it does
-        if (vBottomSheet.getParent() != null){
-            ((ViewGroup) vBottomSheet.getParent()).removeView(vBottomSheet);
-        }
-        bottomSheetDialog = null;
         bottomSheetDialog = new BottomSheetDialog(requireActivity());
         bottomSheetDialog.setContentView(vBottomSheet);
 
@@ -245,15 +245,14 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             TextView address = vBottomSheet.findViewById(R.id.nameAddress);
             address.setText(func.getAddress(marker.getLatitude(), marker.getLongitude(), getContext()));
 
-            modeOfTransport = vBottomSheet.findViewById(R.id.toggleButton);
-            modeOfTransport.setSingleSelection(true);
+            transport = vBottomSheet.findViewById(R.id.toggleButton);
+            transport.setSingleSelection(true);
 
             vBottomSheet.findViewById(R.id.buttonCancel).setOnClickListener(v -> cancel());
             vBottomSheet.findViewById(R.id.getDirections).setOnClickListener(v ->
                     newRoute(new LatLng(uLocation.getLatitude(), uLocation.getLongitude()),
                             marker,
-                            func.getTravelMode(modeOfTransport.getCheckedButtonId())));
-
+                            func.getTravelMode(transport.getCheckedButtonId())));
             bottomSheetDialog.show();
         } else {
             bottomSheetDialog.dismiss();
@@ -262,6 +261,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     @SuppressLint("InflateParams")
     private void setNavigation(FullRoute route){
+        View vBottomSheet;
         vBottomSheet = getLayoutInflater().inflate(R.layout.bottom_sheet_dialog_start_navigation, null);
 
         //Checks if the bottom sheet already exists and removes if it does
@@ -312,7 +312,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         tomtomMap.zoomTo(18);
 
         //setting constant location updates to update the UI with user position
-        locationCallback = new LocationCallback() {
+        locationCallback = (new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 if (locationResult == null) { return; }
@@ -320,7 +320,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                     matcher.match(location);
                 }
             }
-        };
+        });
         startLocationUpdates();
         tomtomMap.getDrivingSettings().startTracking(chevron);
 
@@ -495,10 +495,5 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         this.tomtomMap = tomtomMap;
         this.tomtomMap.setMyLocationEnabled(true);
         this.tomtomMap.clear();
-    }
-    private abstract static class BaseTextWatcher implements TextWatcher {
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-        }
     }
 }

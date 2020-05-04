@@ -12,6 +12,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
+        android:fullBackupOnly="true"
         android:allowBackup="true"
         android:icon="@drawable/logo_circle"
         android:label="@string/app_name"
@@ -19,25 +20,36 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <meta-data android:name="OnlineMaps.Key" android:value="lsSZphVTck4Z9BrwKKapcHj5M6tyD8CX" />
-        <meta-data android:name="OnlineTraffic.Key" android:value="lsSZphVTck4Z9BrwKKapcHj5M6tyD8CX" />
-        <meta-data android:name="OnlineSearch.Key" android:value="lsSZphVTck4Z9BrwKKapcHj5M6tyD8CX" />
-        <meta-data android:name="OnlineRouting.Key" android:value="lsSZphVTck4Z9BrwKKapcHj5M6tyD8CX" />
-        <meta-data android:name="GeofencingApi.Key" android:value="lsSZphVTck4Z9BrwKKapcHj5M6tyD8CX" />
+        <meta-data
+            android:name="OnlineMaps.Key"
+            android:value="lsSZphVTck4Z9BrwKKapcHj5M6tyD8CX" />
+        <meta-data
+            android:name="OnlineTraffic.Key"
+            android:value="lsSZphVTck4Z9BrwKKapcHj5M6tyD8CX" />
+        <meta-data
+            android:name="OnlineSearch.Key"
+            android:value="lsSZphVTck4Z9BrwKKapcHj5M6tyD8CX" />
+        <meta-data
+            android:name="OnlineRouting.Key"
+            android:value="lsSZphVTck4Z9BrwKKapcHj5M6tyD8CX" />
+        <meta-data
+            android:name="GeofencingApi.Key"
+            android:value="lsSZphVTck4Z9BrwKKapcHj5M6tyD8CX" />
 
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".intro.LoginRegister"
-            android:theme="@style/AppTheme.NoActionBar" />
-
-        <activity android:name=".intro.SplashScreen"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".intro.SplashScreen"
             android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter >
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

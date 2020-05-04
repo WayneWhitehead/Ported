@@ -29,8 +29,8 @@ import java.util.*
 class Login : Fragment() {
 
     private lateinit var mAuth: FirebaseAuth
-    private var _username: TextInputEditText? = null
-    private var _password: TextInputEditText? = null
+    private lateinit var _username: TextInputEditText
+    private lateinit var _password: TextInputEditText
     private var mGoogleSignInClient: GoogleSignInClient? = null
     private var mFirebaseAnalytics: FirebaseAnalytics? = null
 
@@ -45,7 +45,9 @@ class Login : Fragment() {
         mGoogleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
 
         _username = layout.findViewById(R.id.username)
+        _username.setAutofillHints(View.AUTOFILL_HINT_EMAIL_ADDRESS)
         _password = layout.findViewById(R.id.password)
+        _password.setAutofillHints(View.AUTOFILL_HINT_PASSWORD)
 
         val google: SignInButton = layout.findViewById(R.id.google)
         google.setOnClickListener { signIn() }
@@ -57,7 +59,7 @@ class Login : Fragment() {
 
     private fun checkLogin() {
         if (validate()) {
-            mAuth.signInWithEmailAndPassword(Objects.requireNonNull(_username!!.text).toString(), Objects.requireNonNull(_password!!.text).toString())
+            mAuth.signInWithEmailAndPassword(Objects.requireNonNull(_username.text).toString(), Objects.requireNonNull(_password.text).toString())
                     .addOnCompleteListener(requireActivity()) { task: Task<AuthResult?> ->
                         if (task.isSuccessful) {
                             Timber.d("signInWithEmail:success")
@@ -112,11 +114,11 @@ class Login : Fragment() {
     }
 
     private fun validate(): Boolean {
-        if (Objects.requireNonNull(_username!!.text).toString() == "") {
-            _username!!.error = "Username cannot be empty"
+        if (Objects.requireNonNull(_username.text).toString() == "") {
+            _username.error = "Username cannot be empty"
             return false
-        } else if (Objects.requireNonNull(_password!!.text).toString().length < 6) {
-            _password!!.error = "Password cannot be less than 8 characters"
+        } else if (Objects.requireNonNull(_password.text).toString().length < 6) {
+            _password.error = "Password cannot be less than 8 characters"
             return false
         }
         return true

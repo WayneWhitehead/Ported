@@ -1,5 +1,7 @@
 package com.hidesign.ported
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import androidx.appcompat.app.AppCompatActivity
@@ -9,11 +11,14 @@ import androidx.navigation.Navigation
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.FirebaseAuth
+import com.hidesign.ported.intro.LoginRegister
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var mAppBarConfiguration: AppBarConfiguration
     private lateinit var toolbar: Toolbar
+    private lateinit var mAuth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,12 +28,11 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
         val navigationView = findViewById<NavigationView>(R.id.nav_view)
-
         // Passing each menu_text ID as a set of Ids because each
         // menu_text should be considered as top level destinations.
-        mAppBarConfiguration = AppBarConfiguration.Builder(R.id.nav_home, R.id.nav_trips, R.id.nav_settings).setDrawerLayout(drawer).build()
+        mAppBarConfiguration = AppBarConfiguration.Builder(R.id.nav_home, R.id.nav_trips, R.id.nav_profile).setDrawerLayout(drawer).build()
         val navController = Navigation.findNavController(this, R.id.nav_host_fragment)
-        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration!!)
+        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration)
         NavigationUI.setupWithNavController(navigationView, navController)
     }
 
@@ -41,6 +45,15 @@ class MainActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         val navController = Navigation.findNavController(this, R.id.nav_host_fragment)
         setSupportActionBar(toolbar)
-        return NavigationUI.navigateUp(navController, mAppBarConfiguration!!) || super.onSupportNavigateUp()
+        return NavigationUI.navigateUp(navController, mAppBarConfiguration) || super.onSupportNavigateUp()
+    }
+
+    fun userLogout() {
+        mAuth = FirebaseAuth.getInstance()
+        mAuth.signOut()
+
+        val intent = Intent(this, LoginRegister::class.java)
+        startActivityForResult(intent, Activity.RESULT_OK)
+        this.finish()
     }
 }

@@ -3,46 +3,30 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.MaterialComponents">
         <!-- Customize your theme here. -->
-        <item name="android:colorPrimary">@color/colorPrimary</item>
-        <item name="android:colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="android:colorAccent">@color/colorAccent</item>
-        <item name="android:windowActivityTransitions">true</item>
-        <item name="android:windowEnterTransition">@android:transition/slide_top</item>
-        <item name="android:windowExitTransition">@android:transition/slide_bottom</item>
-        <item name="android:homeAsUpIndicator">@drawable/menu</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryVariant">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
     </style>
 
     <style name="AppThemeYellow" parent="Theme.MaterialComponents">
         <!-- Customize your theme here. -->
-        <item name="android:colorPrimary">@color/yellowPrimary</item>
-        <item name="android:colorPrimaryDark">@color/yellowPrimaryDark</item>
-        <item name="android:colorAccent">@color/colorAccent</item>
-        <item name="android:windowActivityTransitions">true</item>
-        <item name="android:windowEnterTransition">@android:transition/slide_top</item>
-        <item name="android:windowExitTransition">@android:transition/slide_bottom</item>
-        <item name="android:homeAsUpIndicator">@drawable/menu</item>
+        <item name="colorPrimary">@color/yellowPrimary</item>
+        <item name="colorPrimaryVariant">@color/yellowPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
     </style>
 
     <style name="AppThemeGreen" parent="Theme.MaterialComponents">
         <!-- Customize your theme here. -->
-        <item name="android:colorPrimary">@color/greenPrimary</item>
-        <item name="android:colorPrimaryDark">@color/greenPrimaryDark</item>
-        <item name="android:colorAccent">@color/colorAccent</item>
-        <item name="android:windowActivityTransitions">true</item>
-        <item name="android:windowEnterTransition">@android:transition/slide_top</item>
-        <item name="android:windowExitTransition">@android:transition/slide_bottom</item>
-        <item name="android:homeAsUpIndicator">@drawable/menu</item>
+        <item name="colorPrimary">@color/greenPrimary</item>
+        <item name="colorPrimaryVariant">@color/greenPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
     </style>
 
     <style name="AppThemeRed" parent="Theme.MaterialComponents">
         <!-- Customize your theme here. -->
-        <item name="android:colorPrimary">@color/redPrimary</item>
-        <item name="android:colorPrimaryDark">@color/redPrimaryDark</item>
-        <item name="android:colorAccent">@color/colorAccent</item>
-        <item name="android:windowActivityTransitions">true</item>
-        <item name="android:windowEnterTransition">@android:transition/slide_top</item>
-        <item name="android:windowExitTransition">@android:transition/slide_bottom</item>
-        <item name="android:homeAsUpIndicator">@drawable/menu</item>
+        <item name="colorPrimary">@color/redPrimary</item>
+        <item name="colorPrimaryVariant">@color/redPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
     </style>
 
     <style name="AppTheme.NoActionBar">

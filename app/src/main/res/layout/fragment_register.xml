@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_gravity="center"
     android:background="@android:color/primary_text_light_nodisable"
-    android:orientation="vertical"
+    android:theme="@style/AppThemeYellow"
     tools:context=".intro.Register">
 
     <LinearLayout
@@ -28,7 +28,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginBottom="15dp"
-                android:text="REGISTER"
+                android:text="@string/register"
                 android:textColor="@android:color/black"
                 android:textSize="50sp" />
 
@@ -64,8 +64,8 @@
                 android:id="@+id/usernameTextField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:boxBackgroundColor="@android:color/primary_text_light_nodisable"
-                android:hint="Username">
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:hint="@string/username">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/username"
@@ -80,8 +80,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                app:boxBackgroundColor="@android:color/primary_text_light_nodisable"
-                android:hint="Password">
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:hint="@string/password">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/password"
@@ -96,8 +96,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                app:boxBackgroundColor="@android:color/primary_text_light_nodisable"
-                android:hint="Repeat Password">
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:hint="@string/repeat_password">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/repeatPassword"
@@ -114,7 +114,7 @@
                 android:layout_marginTop="15dp"
                 android:insetTop="3dp"
                 android:insetBottom="3dp"
-                android:text="SUBMIT"
+                android:text="@string/submit"
                 android:textColor="@android:color/black"
                 android:backgroundTint="@color/yellowPrimary"
                 app:rippleColor="@color/yellowPrimaryDark" />
@@ -134,7 +134,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@android:color/white"
-        android:text="Swipe right to login"
+        android:text="@string/swipe_right_to_login"
         android:textSize="15sp"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"

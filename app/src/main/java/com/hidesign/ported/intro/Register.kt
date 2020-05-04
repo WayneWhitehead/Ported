@@ -35,6 +35,7 @@ class Register : Fragment() {
         mFirebaseAnalytics.setCurrentScreen(requireActivity(), "Register Fragment", "Register")
 
         _username = layout.findViewById(R.id.username)
+        _username.setAutofillHints(View.AUTOFILL_HINT_EMAIL_ADDRESS)
         _password = layout.findViewById(R.id.password)
         _repeatPassword = layout.findViewById(R.id.repeatPassword)
 

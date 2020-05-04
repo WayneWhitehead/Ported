@@ -20,8 +20,6 @@ import timber.log.Timber;
 
 public class Functions {
 
-    public Functions(){}
-
     public void sortList(List<Trips> list){
         int n = list.size();
         int k;

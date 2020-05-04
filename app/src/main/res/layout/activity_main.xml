@@ -5,6 +5,7 @@
     android:theme="@style/AppThemeYellow"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
+    android:fitsSystemWindows="true"
     android:layout_height="match_parent"
     tools:openDrawer="start">
 
@@ -23,5 +24,6 @@
         app:itemBackground="@color/menu_background"
         app:headerLayout="@layout/nav_header_main"
         app:menu="@menu/activity_main_drawer" />
+
 
 </androidx.drawerlayout.widget.DrawerLayout>

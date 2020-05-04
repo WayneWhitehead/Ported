@@ -28,9 +28,8 @@
             android:key="modeOfTransport"
             android:title="Favourite mode of transport."
             android:summary="Choose your default transport option."
-            android:defaultValue="Car"
             android:entries="@array/modesOfTransport"
-            android:entryValues="@array/modesOfTransport" />
+            android:entryValues="@array/valuesOfTransport" />
 
     </PreferenceCategory>
 </PreferenceScreen>
