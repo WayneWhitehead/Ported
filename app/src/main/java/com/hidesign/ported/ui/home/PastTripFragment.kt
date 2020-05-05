@@ -21,7 +21,7 @@ import java.util.*
 class PastTripFragment : Fragment() {
 
     private lateinit var mRecyclerView: RecyclerView
-    private val pastTrips: MutableList<Trips?> = ArrayList()
+    private val pastTrips: MutableList<Trips> = ArrayList()
     private val func = Functions()
     private var mDatabase: DatabaseReference? = null
     private var mProgressBar: View? = null
@@ -52,7 +52,7 @@ class PastTripFragment : Fragment() {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 for (postSnapshot in dataSnapshot.children) {
                     val post = postSnapshot.getValue(Trips::class.java)
-                    pastTrips.add(post)
+                    pastTrips.add(post!!)
                 }
                 func.sortList(pastTrips)
                 showList(pastTrips)

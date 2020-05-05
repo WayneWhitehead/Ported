@@ -3,15 +3,15 @@ package com.hidesign.ported.models
 import com.tomtom.online.sdk.common.location.LatLng
 
 class Trips {
-    var startAddress: String? = null
-    var endAddress: String? = null
+    lateinit var startAddress: String
+    lateinit var endAddress: String
     var tripDate: Long = 0
-    var startLocation: LatLng? = null
-    var endLocation: LatLng? = null
+    private lateinit var startLocation: LatLng
+    private lateinit var endLocation: LatLng
     var tripDistance = 0f
 
     constructor() {}
-    constructor(startLocation: LatLng?, startAddress: String?, endLocation: LatLng?, endAddress: String?, tripDate: Long, tripDistance: Float) {
+    constructor(startLocation: LatLng, startAddress: String, endLocation: LatLng, endAddress: String, tripDate: Long, tripDistance: Float) {
         this.startAddress = startAddress
         this.endAddress = endAddress
         this.tripDate = tripDate
