@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
@@ -48,7 +49,7 @@ class MainActivity : AppCompatActivity() {
         return NavigationUI.navigateUp(navController, mAppBarConfiguration) || super.onSupportNavigateUp()
     }
 
-    fun userLogout() {
+    fun userLogout(view: View) {
         mAuth = FirebaseAuth.getInstance()
         mAuth.signOut()
 

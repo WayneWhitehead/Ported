@@ -11,7 +11,7 @@
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/app_bar_height"
+        android:layout_height="180dp"
         android:fitsSystemWindows="true"
         android:background="@color/greenPrimary"
         android:theme="@style/AppTheme.AppBarOverlay">
@@ -41,13 +41,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:paddingTop="30dp"
         tools:context=".intro.ScrollingActivity"
         tools:showIn="@layout/fragment_profile">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/text_margin"
+            android:layout_margin="10dp"
             android:text="@string/large_text" />
 
     </androidx.core.widget.NestedScrollView>
@@ -59,7 +60,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
         android:layout_marginTop="-30dp"
-        app:backgroundTint="@color/greenPrimaryDark"
+        app:backgroundTint="@android:color/white"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
         android:src="@drawable/menu" />
 

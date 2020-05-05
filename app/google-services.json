@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "278581978166",
+    "firebase_url": "https://ported-98860.firebaseio.com",
+    "project_id": "ported-98860",
+    "storage_bucket": "ported-98860.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:278581978166:android:8feb8b939a0d42d9b8e497",
+        "android_client_info": {
+          "package_name": "com.hidesign.ported"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "278581978166-4g3aiedb2qpv56slkfnk991dj03aj32q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB74NVtJVrKNZX3Sq5jeLUsuiHLWRUrUO4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "278581978166-4g3aiedb2qpv56slkfnk991dj03aj32q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
