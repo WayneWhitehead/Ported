@@ -40,21 +40,18 @@
         android:paddingHorizontal="10dp"
         app:singleSelection="true">
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/button1"
             android:layout_width="0dp"
             android:layout_height="60dp"
             android:layout_weight="0.33"
             android:text="@string/driving"
             style="@style/ToggleButtons"/>
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/button2"
             android:layout_width="0dp"
             android:layout_height="60dp"
             android:layout_weight="0.33"
             android:text="@string/public_string"
             style="@style/ToggleButtons"/>
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/button3"
             android:layout_width="0dp"
             android:layout_height="60dp"
             android:layout_weight="0.33"

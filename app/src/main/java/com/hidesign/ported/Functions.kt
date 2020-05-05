@@ -39,7 +39,7 @@ class Functions {
         return TravelMode.CAR
     }
 
-    fun getAddress(latitude: Double, longitude: Double, c: Context?): String {
+    fun getAddress(latitude: Double, longitude: Double, c: Context): String {
         val geo = Geocoder(c, Locale.getDefault())
         var addresses: List<Address>? = null
         try {
@@ -48,7 +48,6 @@ class Functions {
             e.printStackTrace()
             Timber.e("Error getting Street Address: ")
         }
-        assert(addresses != null)
         return addresses!![0].getAddressLine(0)
     }
 

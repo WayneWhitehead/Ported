@@ -26,6 +26,9 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.perf.FirebasePerformance;
+import com.google.firebase.perf.metrics.AddTrace
+import com.google.firebase.perf.metrics.Trace;
 import com.hidesign.ported.Functions
 import com.hidesign.ported.R
 import com.hidesign.ported.models.Trips
@@ -86,21 +89,30 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
         tomtomMap.trafficSettings.turnOnVectorTrafficIncidents()
         tomtomMap.markerSettings.setMarkersClustering(true)
 
+        //when user clicks on the route it brings the bottom sheet back up
+        tomtomMap.addOnRouteClickListener { setNavigation() }
+        //when the user long clicks on the map it will create a new marker on that point
         tomtomMap.addOnMapLongClickListener { latLng: LatLng -> newMarker(latLng) }
+        //when the user clicks on a marker it will bring up the route planner
         tomtomMap.addOnMarkerClickListener { marker: Marker -> setRoutePlanner(marker.position) }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val root = inflater.inflate(R.layout.fragment_home, container, false)
+        val layout = inflater.inflate(R.layout.fragment_home, container, false)
 
         val mFirebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity())
         mFirebaseAnalytics.setCurrentScreen(requireActivity(), "Home Fragment", "MapView")
+
+        searchApi = OnlineSearchApi.create(requireActivity())
+        locationSearch = layout.findViewById(R.id.atv_main_destination_location)
+        searchAdapter = ArrayAdapter(requireActivity(), android.R.layout.simple_dropdown_item_1line, searchAutocompleteList)
+        setSearchWatcher(locationSearch)
 
         val mAuth = FirebaseAuth.getInstance()
         mDatabase = FirebaseDatabase.getInstance().reference.child(mAuth.currentUser!!.uid)
 
         (requireActivity() as AppCompatActivity).supportActionBar?.hide()
-        val openDrawer = root.findViewById<ImageView>(R.id.drawerButton)
+        val openDrawer = layout.findViewById<ImageView>(R.id.drawerButton)
         val navDrawer: DrawerLayout = requireActivity().findViewById(R.id.drawer_layout)
         openDrawer.setOnClickListener { navDrawer.openDrawer(GravityCompat.START) }
 
@@ -109,17 +121,12 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
         val mapFragment = childFragmentManager.findFragmentById(R.id.map_fragment) as MapFragment
         mapFragment.getAsyncMap(onMapReadyCallback)
 
-        searchApi = OnlineSearchApi.create(requireActivity())
-        locationSearch = root.findViewById(R.id.atv_main_destination_location)
-        searchAdapter = ArrayAdapter(requireActivity(), android.R.layout.simple_dropdown_item_1line, searchAutocompleteList)
-        setTextWatcherToAutoCompleteField(locationSearch)
-
-        return root
+        return layout
     }
 
-    private fun setTextWatcherToAutoCompleteField(autoCompleteTextView: AutoCompleteTextView?) {
-        autoCompleteTextView!!.setAdapter(searchAdapter)
-        autoCompleteTextView.addTextChangedListener(object : TextWatcher {
+    private fun setSearchWatcher(autoText: AutoCompleteTextView) {
+        autoText.setAdapter(searchAdapter)
+        autoText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 searchTimerHandler.removeCallbacks(searchRunnable)
@@ -135,17 +142,20 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
                 }
             }
         })
-        autoCompleteTextView.onItemClickListener = OnItemClickListener { parent: AdapterView<*>, _: View?, position: Int, _: Long ->
+        autoText.onItemClickListener = OnItemClickListener { parent: AdapterView<*>, _: View?, position: Int, _: Long ->
             val item = parent.getItemAtPosition(position) as String
-            if (autoCompleteTextView === locationSearch) {
+            if (autoText === locationSearch) {
                 latLngDestination = searchResultsMap[item]!!
                 newMarker(latLngDestination)
             }
         }
     }
 
+    @AddTrace(name = "SearchAddress", enabled = true)
     private fun searchAddress(searchWord: String) {
-        searchApi.search(FuzzySearchQueryBuilder(searchWord).withTypeAhead(true).withMinFuzzyLevel(2)
+        searchApi.search(FuzzySearchQueryBuilder(searchWord)
+                .withTypeAhead(true)
+                .withMinFuzzyLevel(2)
                 .withPreciseness(LatLngAcc(latLngCurrentPosition, 300000f)).build())
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : DisposableSingleObserver<FuzzySearchResponse>() {
@@ -153,11 +163,12 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
                         if (!fuzzySearchResponse.results.isEmpty()) {
                             searchAutocompleteList.clear()
                             searchResultsMap.clear()
+
                             for (result in fuzzySearchResponse.results) {
-                                val addressString = result.address.freeformAddress
-                                searchAutocompleteList.add(addressString)
-                                searchResultsMap[addressString] = result.position
+                                searchAutocompleteList.add(result.address.freeformAddress)
+                                searchResultsMap[result.address.freeformAddress] = result.position
                             }
+
                             searchAdapter.clear()
                             searchAdapter.addAll(searchAutocompleteList)
                             searchAdapter.filter.filter("")
@@ -186,16 +197,23 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
             distance.text = String.format("%s%s", distanceVar[0], distanceVar[1])
 
             val address = vBottomSheet.findViewById<TextView>(R.id.nameAddress)
-            address.text = func.getAddress(marker.latitude, marker.longitude, context)
+            address.text = func.getAddress(marker.latitude, marker.longitude, requireActivity())
 
             transport = vBottomSheet.findViewById(R.id.toggleButton)
             transport.isSingleSelection = true
 
             vBottomSheet.findViewById<View>(R.id.buttonCancel).setOnClickListener { cancel() }
             vBottomSheet.findViewById<View>(R.id.getDirections).setOnClickListener {
-                newRoute(LatLng(uLocation.latitude, uLocation.longitude),
-                        marker,
-                        func.getTravelMode(transport.checkedButtonId))
+                navigationRoute = newRoute(LatLng(uLocation.latitude, uLocation.longitude), marker, func.getTravelMode(transport.checkedButtonId))
+                //builds the route on the map and displays for the user
+                val routeBuilder = RouteBuilder(navigationRoute.coordinates)
+                tomtomMap.addRoute(routeBuilder)
+                tomtomMap.displayRouteOverview(routeBuilder.id)
+
+                //dismisses the route planner bottom sheet and creates the navigation sheet
+                bottomSheetDialog.dismiss()
+                setNavigation()
+                tomtomMap.clear()
             }
             bottomSheetDialog.show()
         } else {
@@ -204,7 +222,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
     }
 
     @SuppressLint("InflateParams")
-    private fun setNavigation(route: FullRoute) {
+    private fun setNavigation() {
         val vBottomSheet: View = layoutInflater.inflate(R.layout.bottom_sheet_dialog_start_navigation, null)
 
         bottomSheetDialog = BottomSheetDialog(requireActivity())
@@ -212,23 +230,23 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
         if (!bottomSheetDialog.isShowing) {
             uLocation = tomtomMap.userLocation!!
             val startAddress = vBottomSheet.findViewById<TextView>(R.id.startAddress)
-            startAddress.text = func.getAddress(route.coordinates[0].latitude, route.coordinates[0].longitude, context)
+            startAddress.text = func.getAddress(navigationRoute.coordinates[0].latitude, navigationRoute.coordinates[0].longitude, requireActivity())
 
             val endAddress = vBottomSheet.findViewById<TextView>(R.id.endAddress)
-            val lastPoint = route.coordinates.size - 1
-            endAddress.text = func.getAddress(route.coordinates[lastPoint].latitude, route.coordinates[lastPoint].longitude, context)
+            val lastPoint = navigationRoute.coordinates.size - 1
+            endAddress.text = func.getAddress(navigationRoute.coordinates[lastPoint].latitude, navigationRoute.coordinates[lastPoint].longitude, requireActivity())
 
-            val distanceVar = func.calculateDistance(route.summary.lengthInMeters.toFloat())
+            val distanceVar = func.calculateDistance(navigationRoute.summary.lengthInMeters.toFloat())
             val distance = vBottomSheet.findViewById<TextView>(R.id.distance)
             distance.text = String.format("%s%s", distanceVar[0], distanceVar[1])
 
             val time = vBottomSheet.findViewById<TextView>(R.id.travelTime)
-            time.text = func.formatTimeFromSeconds(route.summary.travelTimeInSeconds.toLong())
+            time.text = func.formatTimeFromSeconds(navigationRoute.summary.travelTimeInSeconds.toLong())
 
             vBottomSheet.findViewById<View>(R.id.buttonCancel).setOnClickListener { cancel() }
             vBottomSheet.findViewById<View>(R.id.navigate).setOnClickListener {
                 bottomSheetDialog.dismiss()
-                startNavigation(route)
+                startNavigation()
             }
             bottomSheetDialog.show()
         } else {
@@ -236,13 +254,13 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
         }
     }
 
-    private fun startNavigation(route: FullRoute) {
+    private fun startNavigation() {
         val activeIcon = Icon.Factory.fromResources(requireContext(), R.drawable.chevron_color, 2.5)
         val inactiveIcon = Icon.Factory.fromResources(requireContext(), R.drawable.chevron_shadow, 2.5)
         val chevronBuilder = ChevronBuilder.create(activeIcon, inactiveIcon)
         chevron = tomtomMap.drivingSettings.addChevron(chevronBuilder)
         chevron.setLocation(uLocation)
-        createMatcher(route)
+        createMatcher()
         tomtomMap.set3DMode()
         tomtomMap.zoomTo(18.0)
         tomtomMap.isMyLocationEnabled = false
@@ -265,14 +283,13 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
         cancel.setOnClickListener { stopNavigation() }
 
         //Uploading trip data to firebase
-        val size = route.coordinates.size - 1
-        val start = func.getAddress(route.coordinates[0].latitude, route.coordinates[0].longitude, activity)
-        val end = func.getAddress(route.coordinates[size].latitude, route.coordinates[size].longitude, activity)
+        val size = navigationRoute.coordinates.size - 1
+        val start = func.getAddress(navigationRoute.coordinates[0].latitude, navigationRoute.coordinates[0].longitude, requireActivity())
+        val end = func.getAddress(navigationRoute.coordinates[size].latitude, navigationRoute.coordinates[0].longitude, requireActivity())
         val temp = Trips(
-                route.coordinates[0], start,
-                route.coordinates[size], end,
-                System.currentTimeMillis(),
-                route.summary.lengthInMeters.toFloat())
+                navigationRoute.coordinates[0], start,
+                navigationRoute.coordinates[size], end,
+                System.currentTimeMillis(), navigationRoute.summary.lengthInMeters.toFloat())
         mDatabase.child("Trips").child(UUID.randomUUID().toString()).setValue(temp)
         //End Uploading to firebase
     }
@@ -297,20 +314,19 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
         locationSearch.setText("")
     }
 
-    private fun createMatcher(route: FullRoute) {
+    private fun createMatcher() {
         navigationText = requireActivity().findViewById(R.id.nextTurn)
-        navigationText.text = route.guidance.instructions[0].message
+        navigationText.text = navigationRoute.guidance.instructions[0].message
 
         timeLeft = requireActivity().findViewById(R.id.timeLeft)
         val simple: DateFormat = SimpleDateFormat("HH:mm", Locale.ENGLISH)
-        val result = route.summary.arrivalTimeWithZone!!.toDate()
+        val result = navigationRoute.summary.arrivalTimeWithZone!!.toDate()
         timeLeft.text = simple.format(result)
 
         turnDistance = requireActivity().findViewById(R.id.distanceToNextTurn)
         instructionIndex.add(0)
 
-        navigationRoute = route
-        matcher = MatcherFactory.createMatcher(LatLngTraceMatchingDataProvider.fromPoints(route.coordinates))
+        matcher = MatcherFactory.createMatcher(LatLngTraceMatchingDataProvider.fromPoints(navigationRoute.coordinates))
         matcher.setMatcherListener(this)
     }
 
@@ -343,7 +359,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
         setRoutePlanner(location)
     }
 
-    private fun newRoute(start: LatLng, end: LatLng, transport: TravelMode) {
+    private fun newRoute(start: LatLng, end: LatLng, transport: TravelMode): FullRoute {
         val routingApi = OnlineRoutingApi.create(requireActivity())
         val routeQuery = RouteQueryBuilder(start, end)
                 .withInstructionsType(InstructionsType.TEXT)
@@ -353,25 +369,14 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
         routingApi.planRoute(routeQuery).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread()).subscribe(object : DisposableSingleObserver<RouteResponse?>() {
             override fun onSuccess(routeResponse: RouteResponse) {
                 for (fullRoute in routeResponse.routes) {
-                    tomtomMap.clear()
-
-                    //builds the route on the map and displays for the user
-                    val routeBuilder = RouteBuilder(fullRoute.coordinates)
-                    tomtomMap.addRoute(routeBuilder)
-                    tomtomMap.displayRouteOverview(routeBuilder.id)
-
-                    //dismisses the route planner bottom sheet and creates the navigation sheet
-                    bottomSheetDialog.dismiss()
-                    setNavigation(fullRoute)
-
-                    //when user clicks on the route it brings the bottom sheet back up
-                    tomtomMap.addOnRouteClickListener { setNavigation(fullRoute) }
+                    navigationRoute = fullRoute
                 }
             }
             override fun onError(e: Throwable) {
                 Toast.makeText(context, e.localizedMessage, Toast.LENGTH_LONG).show()
             }
         })
+        return navigationRoute
     }
 
     private fun initLocationSource() {
@@ -384,13 +389,11 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
 
     private val lastKnownLocation: Unit
         get() {
-            fusedLocationClient.lastLocation.addOnSuccessListener(requireActivity()) { location: Location? ->
-                if (location != null) {
-                    uLocation = location
-                    latLngCurrentPosition = LatLng(location.latitude, location.longitude)
-                    @Suppress("DEPRECATION")
-                    tomtomMap.centerOn(uLocation.latitude, uLocation.longitude, 15.0)
-                }
+            fusedLocationClient.lastLocation.addOnSuccessListener(requireActivity()) { location: Location ->
+                uLocation = location
+                latLngCurrentPosition = LatLng(location.latitude, location.longitude)
+                @Suppress("DEPRECATION")
+                tomtomMap.centerOn(uLocation.latitude, uLocation.longitude, 15.0)
             }
         }
 
@@ -418,7 +421,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
 
     override fun onMapReady(tomtomMap: TomtomMap) {
         this.tomtomMap = tomtomMap
-        this.tomtomMap.isMyLocationEnabled = true
         this.tomtomMap.clear()
     }
 }

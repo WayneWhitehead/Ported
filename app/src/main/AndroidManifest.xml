@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:dist="http://schemas.android.com/apk/distribution"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.hidesign.ported">
 
     <dist:module dist:instant="true" />
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
@@ -37,9 +37,6 @@
         <meta-data
             android:name="OnlineRouting.Key"
             android:value="lsSZphVTck4Z9BrwKKapcHj5M6tyD8CX" />
-        <meta-data
-            android:name="GeofencingApi.Key"
-            android:value="lsSZphVTck4Z9BrwKKapcHj5M6tyD8CX" />
 
         <activity
             android:name=".MainActivity"
@@ -54,7 +51,6 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
