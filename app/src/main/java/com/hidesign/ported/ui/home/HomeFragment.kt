@@ -26,9 +26,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.perf.FirebasePerformance;
 import com.google.firebase.perf.metrics.AddTrace
-import com.google.firebase.perf.metrics.Trace;
 import com.hidesign.ported.Functions
 import com.hidesign.ported.R
 import com.hidesign.ported.models.Trips
@@ -204,16 +202,8 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
 
             vBottomSheet.findViewById<View>(R.id.buttonCancel).setOnClickListener { cancel() }
             vBottomSheet.findViewById<View>(R.id.getDirections).setOnClickListener {
-                navigationRoute = newRoute(LatLng(uLocation.latitude, uLocation.longitude), marker, func.getTravelMode(transport.checkedButtonId))
-                //builds the route on the map and displays for the user
-                val routeBuilder = RouteBuilder(navigationRoute.coordinates)
-                tomtomMap.addRoute(routeBuilder)
-                tomtomMap.displayRouteOverview(routeBuilder.id)
-
-                //dismisses the route planner bottom sheet and creates the navigation sheet
-                bottomSheetDialog.dismiss()
-                setNavigation()
                 tomtomMap.clear()
+                newRoute(LatLng(uLocation.latitude, uLocation.longitude), marker, func.getTravelMode(transport.checkedButtonId))
             }
             bottomSheetDialog.show()
         } else {
@@ -359,7 +349,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
         setRoutePlanner(location)
     }
 
-    private fun newRoute(start: LatLng, end: LatLng, transport: TravelMode): FullRoute {
+    private fun newRoute(start: LatLng, end: LatLng, transport: TravelMode) {
         val routingApi = OnlineRoutingApi.create(requireActivity())
         val routeQuery = RouteQueryBuilder(start, end)
                 .withInstructionsType(InstructionsType.TEXT)
@@ -370,13 +360,20 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
             override fun onSuccess(routeResponse: RouteResponse) {
                 for (fullRoute in routeResponse.routes) {
                     navigationRoute = fullRoute
+                    //builds the route on the map and displays for the user
+                    val routeBuilder = RouteBuilder(navigationRoute.coordinates)
+                    tomtomMap.addRoute(routeBuilder)
+                    tomtomMap.displayRouteOverview(routeBuilder.id)
+
+                    //dismisses the route planner bottom sheet and creates the navigation sheet
+                    bottomSheetDialog.dismiss()
+                    setNavigation()
                 }
             }
             override fun onError(e: Throwable) {
                 Toast.makeText(context, e.localizedMessage, Toast.LENGTH_LONG).show()
             }
         })
-        return navigationRoute
     }
 
     private fun initLocationSource() {
