@@ -51,6 +51,10 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
+
+    private val func = Functions()
+    private lateinit var navigationRoute: FullRoute
+    private val instructionIndex: MutableList<Int> = ArrayList()
     private var requestingLocationUpdates = false
     private lateinit var uLocation: Location
     private lateinit var latLngCurrentPosition: LatLng
@@ -58,26 +62,28 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
     private lateinit var locationCallback: LocationCallback
     private lateinit var mDatabase: DatabaseReference
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+
     private lateinit var tomtomMap: TomtomMap
     private lateinit var matcher: Matcher
     private lateinit var chevron: Chevron
+
     private lateinit var searchApi: SearchApi
-    private val func = Functions()
-    private lateinit var bottomSheetDialog: BottomSheetDialog
-    private lateinit var locationSearch: AutoCompleteTextView
     private val searchTimerHandler = Handler()
     private var searchRunnable: Runnable? = null
     private lateinit var searchAdapter: ArrayAdapter<String>
     private val searchAutocompleteList: MutableList<String> = ArrayList()
     private val searchResultsMap: MutableMap<String, LatLng> = HashMap()
+
+    private lateinit var bottomSheetDialog: BottomSheetDialog
+    private lateinit var locationSearch: AutoCompleteTextView
+
     private lateinit var navigationText: TextView
     private lateinit var timeLeft: TextView
     private lateinit var turnDistance: TextView
-    private lateinit var navigationRoute: FullRoute
-    private val instructionIndex: MutableList<Int> = ArrayList()
 
     private val onMapReadyCallback = OnMapReadyCallback { map ->
         tomtomMap = map
+        tomtomMap.styleSettings.setStyleJson("raw/main.json")
         tomtomMap.isMyLocationEnabled = true
         lastKnownLocation
 
@@ -95,7 +101,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
         tomtomMap.addOnMarkerClickListener { marker: Marker -> setRoutePlanner(marker.position) }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val layout = inflater.inflate(R.layout.fragment_home, container, false)
 
         val mFirebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity())
@@ -118,6 +124,10 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
 
         val mapFragment = childFragmentManager.findFragmentById(R.id.map_fragment) as MapFragment
         mapFragment.getAsyncMap(onMapReadyCallback)
+        val zoomIn: ImageView = layout.findViewById(R.id.zoomIn)
+        val zoomOut: ImageView = layout.findViewById(R.id.zoomOut)
+        zoomIn.setOnClickListener { tomtomMap.zoomIn() }
+        zoomOut.setOnClickListener { tomtomMap.zoomOut() }
 
         return layout
     }
@@ -129,7 +139,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 searchTimerHandler.removeCallbacks(searchRunnable)
             }
-
             override fun afterTextChanged(s: Editable) {
                 if (s.isNotEmpty()) {
                     if (s.length >= 4) {
@@ -166,7 +175,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
                                 searchAutocompleteList.add(result.address.freeformAddress)
                                 searchResultsMap[result.address.freeformAddress] = result.position
                             }
-
                             searchAdapter.clear()
                             searchAdapter.addAll(searchAutocompleteList)
                             searchAdapter.filter.filter("")
@@ -245,13 +253,12 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
     }
 
     private fun startNavigation() {
-        val activeIcon = Icon.Factory.fromResources(requireContext(), R.drawable.chevron_color, 2.5)
+        val activeIcon = Icon.Factory.fromResources(requireContext(), R.drawable.car, 2.5)
         val inactiveIcon = Icon.Factory.fromResources(requireContext(), R.drawable.chevron_shadow, 2.5)
         val chevronBuilder = ChevronBuilder.create(activeIcon, inactiveIcon)
         chevron = tomtomMap.drivingSettings.addChevron(chevronBuilder)
         chevron.setLocation(uLocation)
         createMatcher()
-        tomtomMap.set3DMode()
         tomtomMap.zoomTo(18.0)
         tomtomMap.isMyLocationEnabled = false
 
@@ -324,7 +331,18 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
         chevron.isDimmed = !matchResult.isMatched
         chevron.setLocation(matchResult.matchedLocation)
         val instructions = navigationRoute.guidance.instructions.toList()
-        turnDistance.text = func.distanceToNextTurn(matchResult.matchedLocation.distanceTo(instructions[instructionIndex[0]].point.toLocation()))
+
+        val tempDistance = func.distanceToNextTurn(matchResult.matchedLocation.distanceTo(instructions[instructionIndex[0]].point.toLocation()))
+        when {
+            tempDistance != "" -> {
+                turnDistance.text = tempDistance
+                turnDistance.visibility = View.VISIBLE
+            }
+            else -> {
+                turnDistance.visibility = View.GONE
+            }
+        }
+
         var lat = String.format(Locale.ENGLISH, "%.4f", matchResult.matchedLocation.latitude).toDouble()
         var lon = String.format(Locale.ENGLISH, "%.4f", matchResult.matchedLocation.longitude).toDouble()
         val temp = LatLng(lat, lon)

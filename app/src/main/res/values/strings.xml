@@ -59,4 +59,6 @@
     <string name="login">LOGIN</string>
     <string name="swipe_left_to_register">Swipe left to register</string>
     <string name="nav_header_image">Nav Header Image</string>
+    <string name="plus">+</string>
+    <string name="zoominbutton">zoomInButton</string>
 </resources>

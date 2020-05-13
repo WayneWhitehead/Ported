@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "278581978166-l0atma2t8upo96aonljndat0oc3sqh27.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hidesign.ported",
+            "certificate_hash": "863724765389a8b69e7b85571a939ddfc43b896e"
+          }
+        },
+        {
           "client_id": "278581978166-4g3aiedb2qpv56slkfnk991dj03aj32q.apps.googleusercontent.com",
           "client_type": 3
         }

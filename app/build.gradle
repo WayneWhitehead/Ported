@@ -14,7 +14,7 @@ android {
         minSdkVersion 26
         targetSdkVersion 29
         versionCode 1
-        versionName "0.1"
+        versionName "0.1.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -64,6 +64,7 @@ dependencies {
     implementation("com.tomtom.online:sdk-traffic:2.4449")
     implementation("com.tomtom.online:sdk-maps-driving-extensions:2.4449")
     implementation("com.tomtom.online:sdk-search:2.4449")
+    implementation("com.tomtom.online:sdk-maps-styles-extensions:2.4458")
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
