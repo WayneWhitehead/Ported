@@ -21,19 +21,17 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.google.android.gms.location.*
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.perf.metrics.AddTrace
 import com.hidesign.ported.Functions
 import com.hidesign.ported.R
 import com.hidesign.ported.models.Trips
 import com.tomtom.online.sdk.common.location.LatLng
 import com.tomtom.online.sdk.common.location.LatLngAcc
-import com.tomtom.online.sdk.common.permission.AndroidPermissionChecker
-import com.tomtom.online.sdk.common.permission.PermissionChecker
 import com.tomtom.online.sdk.map.*
 import com.tomtom.online.sdk.map.driving.*
 import com.tomtom.online.sdk.map.model.MapTilesType
@@ -56,7 +54,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
     private lateinit var navigationRoute: FullRoute
     private val instructionIndex: MutableList<Int> = ArrayList()
     private var requestingLocationUpdates = false
-    private lateinit var uLocation: Location
+    private var uLocation: Location? = null
     private lateinit var latLngCurrentPosition: LatLng
     private lateinit var latLngDestination: LatLng
     private lateinit var locationCallback: LocationCallback
@@ -83,9 +81,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
 
     private val onMapReadyCallback = OnMapReadyCallback { map ->
         tomtomMap = map
-        tomtomMap.styleSettings.setStyleJson("raw/main.json")
         tomtomMap.isMyLocationEnabled = true
-        lastKnownLocation
 
         tomtomMap.uiSettings.mapTilesType = MapTilesType.VECTOR
         tomtomMap.uiSettings.compassView.hide()
@@ -118,16 +114,17 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
         (requireActivity() as AppCompatActivity).supportActionBar?.hide()
         val openDrawer = layout.findViewById<ImageView>(R.id.drawerButton)
         val navDrawer: DrawerLayout = requireActivity().findViewById(R.id.drawer_layout)
+        navDrawer.fitsSystemWindows = true
         openDrawer.setOnClickListener { navDrawer.openDrawer(GravityCompat.START) }
 
         initLocationSource()
 
         val mapFragment = childFragmentManager.findFragmentById(R.id.map_fragment) as MapFragment
         mapFragment.getAsyncMap(onMapReadyCallback)
-        val zoomIn: ImageView = layout.findViewById(R.id.zoomIn)
-        val zoomOut: ImageView = layout.findViewById(R.id.zoomOut)
-        zoomIn.setOnClickListener { tomtomMap.zoomIn() }
-        zoomOut.setOnClickListener { tomtomMap.zoomOut() }
+        val zoomIn: MaterialButton = layout.findViewById(R.id.zoomIncrease)
+        val zoomOut: MaterialButton = layout.findViewById(R.id.zoomDecrease)
+        zoomIn.setOnClickListener { tomtomMap.zoomTo(tomtomMap.zoomLevel.inc()) }
+        zoomOut.setOnClickListener { tomtomMap.zoomTo(tomtomMap.zoomLevel.dec()) }
 
         return layout
     }
@@ -144,7 +141,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
                     if (s.length >= 4) {
                         searchRunnable = Runnable { searchAddress(s.toString()) }
                         searchAdapter.clear()
-                        searchTimerHandler.postDelayed(searchRunnable, 800)
+                        searchTimerHandler.postDelayed(searchRunnable, 500)
                     }
                 }
             }
@@ -158,7 +155,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
         }
     }
 
-    @AddTrace(name = "SearchAddress", enabled = true)
     private fun searchAddress(searchWord: String) {
         searchApi.search(FuzzySearchQueryBuilder(searchWord)
                 .withTypeAhead(true)
@@ -198,7 +194,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
             val destination = Location("")
             destination.latitude = marker.latitude
             destination.longitude = marker.longitude
-            val distanceVar = func.calculateDistance(uLocation.distanceTo(destination))
+            val distanceVar = func.calculateDistance(uLocation!!.distanceTo(destination))
             val distance = vBottomSheet.findViewById<TextView>(R.id.distance)
             distance.text = String.format("%s%s", distanceVar[0], distanceVar[1])
 
@@ -211,7 +207,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
             vBottomSheet.findViewById<View>(R.id.buttonCancel).setOnClickListener { cancel() }
             vBottomSheet.findViewById<View>(R.id.getDirections).setOnClickListener {
                 tomtomMap.clear()
-                newRoute(LatLng(uLocation.latitude, uLocation.longitude), marker, func.getTravelMode(transport.checkedButtonId))
+                newRoute(LatLng(uLocation!!.latitude, uLocation!!.longitude), marker, func.getTravelMode(transport.checkedButtonId))
             }
             bottomSheetDialog.show()
         } else {
@@ -253,13 +249,14 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
     }
 
     private fun startNavigation() {
-        val activeIcon = Icon.Factory.fromResources(requireContext(), R.drawable.car, 2.5)
-        val inactiveIcon = Icon.Factory.fromResources(requireContext(), R.drawable.chevron_shadow, 2.5)
+        val activeIcon = Icon.Factory.fromResources(requireContext(), R.drawable.car, 3.0)
+        val inactiveIcon = Icon.Factory.fromResources(requireContext(), R.drawable.chevron_shadow, 3.0)
         val chevronBuilder = ChevronBuilder.create(activeIcon, inactiveIcon)
         chevron = tomtomMap.drivingSettings.addChevron(chevronBuilder)
         chevron.setLocation(uLocation)
         createMatcher()
-        tomtomMap.zoomTo(18.0)
+
+        tomtomMap.centerOnMyLocation()
         tomtomMap.isMyLocationEnabled = false
 
         //setting constant location updates to update the UI with user position
@@ -396,24 +393,26 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
 
     private fun initLocationSource() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-        val permissionChecker: PermissionChecker = AndroidPermissionChecker.createLocationChecker(activity)
-        if (permissionChecker.ifNotAllPermissionGranted()) {
+    }
+
+    private fun lastKnownLocation() {
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION), 1)
+            return
+        }
+        fusedLocationClient.lastLocation.addOnSuccessListener(requireActivity()) { location: Location? ->
+            uLocation = location
+            latLngCurrentPosition = LatLng(location?.latitude!!, location.longitude)
+            tomtomMap.centerOn(uLocation!!.latitude, uLocation!!.longitude, 15.0)
         }
     }
 
-    private val lastKnownLocation: Unit
-        get() {
-            fusedLocationClient.lastLocation.addOnSuccessListener(requireActivity()) { location: Location ->
-                uLocation = location
-                latLngCurrentPosition = LatLng(location.latitude, location.longitude)
-                @Suppress("DEPRECATION")
-                tomtomMap.centerOn(uLocation.latitude, uLocation.longitude, 15.0)
-            }
-        }
-
     private fun startLocationUpdates() {
         val locationRequest = LocationRequest.create().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY).setFastestInterval(10).setInterval(100)
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION), 1)
+            return
+        }
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
         requestingLocationUpdates = true
     }
@@ -422,7 +421,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 1) {
             if (grantResults.size >= 2 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                lastKnownLocation
+                lastKnownLocation()
             } else {
                 Toast.makeText(activity, "Location Access Denied", Toast.LENGTH_SHORT).show()
             }

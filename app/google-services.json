@@ -15,11 +15,19 @@
       },
       "oauth_client": [
         {
-          "client_id": "278581978166-l0atma2t8upo96aonljndat0oc3sqh27.apps.googleusercontent.com",
+          "client_id": "278581978166-sk5dnj0qth8ln2ms6ba90h2bm6iekkt3.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.hidesign.ported",
-            "certificate_hash": "863724765389a8b69e7b85571a939ddfc43b896e"
+            "certificate_hash": "9d57753d44175836a58d6c7c0c6098ab9589f5b8"
+          }
+        },
+        {
+          "client_id": "278581978166-jpmuo30uuu3c1a9j4gr93updrgchbe2a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hidesign.ported",
+            "certificate_hash": "046a907cda5f3a8e4f1a7c7695cc7c2f775ab4a1"
           }
         },
         {

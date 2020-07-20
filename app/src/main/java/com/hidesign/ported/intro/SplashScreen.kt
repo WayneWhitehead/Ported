@@ -1,6 +1,5 @@
 package com.hidesign.ported.intro
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -8,7 +7,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.hidesign.ported.MainActivity
 import com.hidesign.ported.R
-import timber.log.Timber
 import java.util.*
 
 class SplashScreen : AppCompatActivity() {
@@ -22,7 +20,6 @@ class SplashScreen : AppCompatActivity() {
     }
 
     private fun showMain() {
-        Timber.e("ShowMain: ")
         val task: TimerTask = object : TimerTask() {
             override fun run() {
                 if (currentUser != null) {
@@ -37,13 +34,13 @@ class SplashScreen : AppCompatActivity() {
 
     private fun goToMain() {
         val intent = Intent(this, MainActivity::class.java)
-        startActivityForResult(intent, Activity.RESULT_OK)
-        Objects.requireNonNull(this).finish()
+        startActivity(intent)
+        finish()
     }
 
     private fun goToSignIn() {
         val intent = Intent(this, LoginRegister::class.java)
-        startActivityForResult(intent, Activity.RESULT_OK)
-        Objects.requireNonNull(this).finish()
+        startActivity(intent)
+        finish()
     }
 }

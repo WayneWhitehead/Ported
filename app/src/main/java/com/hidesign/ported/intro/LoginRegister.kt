@@ -13,7 +13,6 @@ import kotlin.math.abs
 class LoginRegister : AppCompatActivity() {
 
     private lateinit var viewPager2: ViewPager2
-    private var currentFrag: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,12 +31,10 @@ class LoginRegister : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (currentFrag == 0){
+        if (viewPager2.currentItem == 0){
             viewPager2.currentItem = 1
-            currentFrag = 1
         } else {
             viewPager2.currentItem = 0
-            currentFrag = 1
         }
     }
 
@@ -45,7 +42,7 @@ class LoginRegister : AppCompatActivity() {
 
         override fun transformPage(view: View, position: Float) {
             view.apply {
-                val pageWidth = width
+                val pageHeight = height
                 when {
                     position < -1 -> { // [-Infinity,-1)
                         // This page is way off-screen to the left.
@@ -64,9 +61,9 @@ class LoginRegister : AppCompatActivity() {
                         alpha = 1 - position
 
                         // Counteract the default slide transition
-                        translationX = pageWidth * -position
+                        translationX = -1f
                         // Move it behind the left page
-                        translationZ = -1f
+                        translationZ = pageHeight * -position
 
                         // Scale the page down (between MIN_SCALE and 1)
                         val scaleFactor = (0.75 + (1 - 0.75) * (1 - abs(position)))

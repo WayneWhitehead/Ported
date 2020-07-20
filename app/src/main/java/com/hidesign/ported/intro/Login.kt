@@ -31,14 +31,14 @@ class Login : Fragment() {
     private lateinit var mAuth: FirebaseAuth
     private lateinit var _username: TextInputEditText
     private lateinit var _password: TextInputEditText
-    private var mGoogleSignInClient: GoogleSignInClient? = null
-    private var mFirebaseAnalytics: FirebaseAnalytics? = null
+    private lateinit var mGoogleSignInClient: GoogleSignInClient
+    private lateinit var mFirebaseAnalytics: FirebaseAnalytics
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val layout = inflater.inflate(R.layout.fragment_login, container, false)
 
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity())
-        mFirebaseAnalytics!!.setCurrentScreen(requireActivity(), "Login Fragment", "Login")
+        mFirebaseAnalytics.setCurrentScreen(requireActivity(), "Login Fragment", "Login")
         mAuth = FirebaseAuth.getInstance()
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestIdToken(getString(R.string.default_web_client_id)).requestEmail().build()
@@ -65,7 +65,7 @@ class Login : Fragment() {
                             Timber.d("signInWithEmail:success")
                             val params = Bundle()
                             params.putString("User", Objects.requireNonNull(mAuth.currentUser?.email))
-                            mFirebaseAnalytics!!.logEvent("loginWithEmail", params)
+                            mFirebaseAnalytics.logEvent("loginWithEmail", params)
                             goToMain()
                         } else {
                             Timber.tag("Login").w(task.exception, "signInWithEmail:failure")
@@ -75,15 +75,15 @@ class Login : Fragment() {
     }
 
     private fun signIn() {
-        val signInIntent = mGoogleSignInClient!!.signInIntent
-        startActivityForResult(signInIntent, RC_SIGN_IN)
+        val signInIntent = mGoogleSignInClient.signInIntent
+        startActivityForResult(signInIntent, 9001)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        if (requestCode == RC_SIGN_IN) {
+        if (requestCode == 9001) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
                 // Google Sign In was successful, authenticate with Firebase
@@ -91,7 +91,7 @@ class Login : Fragment() {
                 firebaseAuthWithGoogle(account)
             } catch (e: ApiException) {
                 Timber.tag("LoginFragment").e(e, "Google sign in failed")
-                Toast.makeText(activity, "Google sign in failed.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, e.status.toString(), Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -104,7 +104,7 @@ class Login : Fragment() {
                 Timber.tag("GoogleSignIn").e("signInWithCredential:success")
                 val params = Bundle()
                 params.putString("User", Objects.requireNonNull(mAuth.currentUser?.email))
-                mFirebaseAnalytics!!.logEvent("loginWithGoogle", params)
+                mFirebaseAnalytics.logEvent("loginWithGoogle", params)
                 goToMain()
             } else {
                 Timber.tag("GoogleSignIn").e(task.exception, "signInWithCredential:failure")
@@ -128,9 +128,5 @@ class Login : Fragment() {
         val intent = Intent(context, MainActivity::class.java)
         startActivityForResult(intent, Activity.RESULT_OK)
         requireActivity().finish()
-    }
-
-    companion object {
-        private const val RC_SIGN_IN = 9001
     }
 }

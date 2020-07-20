@@ -55,9 +55,9 @@
     <string name="password">Password</string>
     <string name="repeat_password">Repeat Password</string>
     <string name="submit">SUBMIT</string>
-    <string name="swipe_right_to_login">Swipe right to login</string>
+    <string name="swipe_right_to_login">Swipe down to login</string>
     <string name="login">LOGIN</string>
-    <string name="swipe_left_to_register">Swipe left to register</string>
+    <string name="swipe_left_to_register">Swipe up to register</string>
     <string name="nav_header_image">Nav Header Image</string>
     <string name="plus">+</string>
     <string name="zoominbutton">zoomInButton</string>

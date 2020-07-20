@@ -17,44 +17,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:background="@color/yellowPrimary"
-            android:gravity="bottom"
-            android:layout_weight="0.35"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginBottom="15dp"
-                android:text="@string/login"
-                android:textColor="@android:color/black"
-                android:textSize="50sp" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:layout_marginBottom="10dp"
-                android:background="@android:color/black" />
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:layout_marginBottom="5dp"
-                android:background="@android:color/black" />
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:layout_marginBottom="2.5dp"
-                android:background="@android:color/black" />
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:layout_marginBottom="1dp"
-                android:background="@android:color/black" />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
             android:layout_weight="0.65"
             android:padding="25dp"
             android:orientation="vertical">
@@ -113,6 +75,7 @@
         android:layout_height="30dp"
         android:src="@drawable/ic_arrow_right"
         android:layout_above="@id/swipeRight"
+        android:rotation="270"
         android:layout_centerHorizontal="true"
         android:contentDescription="@string/left_arrow" />
 

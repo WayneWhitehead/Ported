@@ -2,17 +2,15 @@
 <FrameLayout android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tomtom="http://schemas.android.com/tools"
+    android:animateLayoutChanges="true"
     android:orientation="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <androidx.fragment.app.FragmentContainerView
+    <fragment
         android:id="@+id/map_fragment"
         android:name="com.tomtom.online.sdk.map.MapFragment"
         android:layout_width="match_parent"
-        android:background="@color/whiteText"
-        android:layout_height="match_parent"
-        tomtom:styleUrl="asset://raw/main.json" />
+        android:layout_height="match_parent" />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/search_bar"
@@ -20,6 +18,7 @@
         android:layout_height="wrap_content"
         app:cardCornerRadius="30dp"
         app:strokeColor="#5A272727"
+        android:animateLayoutChanges="true"
         app:strokeWidth="1dp"
         app:cardBackgroundColor="@color/colorPrimary"
         app:cardElevation="2dp"
@@ -28,6 +27,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
             android:orientation="horizontal">
 
             <ImageView
@@ -43,6 +43,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minWidth="400dp"
+                android:animateLayoutChanges="true"
                 android:layout_gravity="center"
                 android:layout_marginStart="5dp"
                 android:layout_marginEnd="10dp"
@@ -69,33 +70,45 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
+        android:animateLayoutChanges="true"
         android:layout_margin="5dp"
         android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/zoomIn"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/zoomIncrease"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_gravity="end"
-            android:clickable="true"
+            android:text="+"
+            app:strokeColor="#00000000"
+            android:textSize="20sp"
+            app:icon="@drawable/plus"
+            app:iconGravity="textStart"
+            app:iconSize="40dp"
             android:contentDescription="@string/zoominbutton"
-            android:padding="5dp"
-            android:src="@drawable/plus" />
-        <ImageView
-            android:id="@+id/zoomOut"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:padding="5dp"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/zoomDecrease"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_gravity="end"
+            android:text="+"
+            app:strokeColor="#00000000"
+            android:textSize="20sp"
+            app:icon="@drawable/minus"
+            app:iconGravity="textStart"
+            app:iconSize="40dp"
             android:layout_marginBottom="5dp"
-            android:clickable="true"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:contentDescription="@string/zoominbutton"
-            android:padding="5dp"
-            android:src="@drawable/minus" />
+            android:padding="5dp" />
 
         <LinearLayout
             android:id="@+id/navigationBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
             android:orientation="vertical"
             android:visibility="gone">
 
@@ -104,8 +117,8 @@
                 android:layout_height="50dp"
                 android:layout_gravity="end"
                 android:layout_marginEnd="10dp"
+                android:animateLayoutChanges="true"
                 android:layout_marginBottom="-10dp"
-                android:visibility="visible"
                 app:cardBackgroundColor="@color/colorPrimaryDark"
                 app:cardCornerRadius="15dp"
                 app:cardElevation="6dp">
@@ -114,6 +127,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
+                    android:animateLayoutChanges="true"
                     android:paddingHorizontal="20dp"
                     android:paddingTop="10dp">
 
@@ -138,63 +152,69 @@
                 android:layout_width="match_parent"
                 android:layout_height="75dp"
                 android:layout_gravity="bottom"
+                android:animateLayoutChanges="true"
                 app:cardBackgroundColor="@android:color/white"
                 app:cardCornerRadius="20dp"
                 app:cardElevation="10dp">
 
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:orientation="horizontal">
+                    android:animateLayoutChanges="true">
 
                     <ImageView
                         android:id="@+id/cancelNavigation"
-                        android:layout_width="0dp"
+                        android:layout_width="60dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="0.13"
                         android:clickable="true"
                         android:contentDescription="@string/cancel_button"
+                        android:layout_alignParentLeft="true"
                         android:elevation="10dp"
                         android:padding="10dp"
-                        android:src="@drawable/close"/>
-
-                    <View
-                        android:layout_width="2dp"
-                        android:layout_height="match_parent"
-                        android:background="@color/colorPrimaryDark" />
-                    <View
-                        android:layout_width="1dp"
-                        android:layout_height="match_parent"
-                        android:background="@android:color/black" />
+                        android:src="@drawable/close" />
 
                     <LinearLayout
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="0.6"
                         android:background="@color/colorPrimary"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="5dp">
+                        android:layout_toEndOf="@id/cancelNavigation"
+                        android:layout_toStartOf="@id/distanceLayout">
 
                         <TextView
                             android:id="@+id/nextTurn"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/temp_direction_string"
                             android:textAlignment="center"
+                            android:layout_gravity="center"
                             android:textColor="@android:color/white"
                             android:textSize="18sp"/>
+                    </LinearLayout>
+                    <View
+                        android:layout_width="2dp"
+                        android:layout_height="match_parent"
+                        android:layout_margin="5dp"
+                        android:background="@android:color/white"/>
+
+                    <LinearLayout
+                        android:id="@+id/distanceLayout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:animateLayoutChanges="true"
+                        android:layout_alignParentEnd="true">
 
                         <TextView
                             android:id="@+id/distanceToNextTurn"
-                            android:layout_width="wrap_content"
+                            android:layout_width="50dp"
                             android:layout_height="wrap_content"
                             android:text="@string/temp_distance"
-                            android:textColor="@android:color/white"
+                            android:textAlignment="center"
+                            android:layout_gravity="center"
+                            android:textColor="@android:color/black"
+                            android:layout_marginEnd="10dp"
                             android:textSize="14sp"/>
                     </LinearLayout>
-                </LinearLayout>
+                </RelativeLayout>
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
     </LinearLayout>

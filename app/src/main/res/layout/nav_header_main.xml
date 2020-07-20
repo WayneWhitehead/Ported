@@ -11,8 +11,9 @@
         android:layout_width="wrap_content"
         android:layout_height="160dp"
         android:contentDescription="@string/nav_header_image"
-        android:paddingTop="10dp"
-        app:srcCompat="@drawable/logo" />
+        android:paddingBottom="10dp"
+        android:paddingTop="20dp"
+        app:srcCompat="@drawable/logo_colour" />
 
     <com.google.android.material.button.MaterialButton
         android:layout_width="match_parent"

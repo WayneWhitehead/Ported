@@ -49,12 +49,6 @@
             android:layout_width="0dp"
             android:layout_height="60dp"
             android:layout_weight="0.33"
-            android:text="@string/public_string"
-            style="@style/ToggleButtons"/>
-        <com.google.android.material.button.MaterialButton
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:layout_weight="0.33"
             android:text="@string/walking"
             app:iconSize="30dp"
             style="@style/ToggleButtons"/>
