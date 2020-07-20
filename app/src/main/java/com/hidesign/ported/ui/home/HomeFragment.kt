@@ -118,6 +118,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
         openDrawer.setOnClickListener { navDrawer.openDrawer(GravityCompat.START) }
 
         initLocationSource()
+        lastKnownLocation()
 
         val mapFragment = childFragmentManager.findFragmentById(R.id.map_fragment) as MapFragment
         mapFragment.getAsyncMap(onMapReadyCallback)
@@ -156,6 +157,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
     }
 
     private fun searchAddress(searchWord: String) {
+        latLngCurrentPosition = LatLng(tomtomMap.userLocation!!.latitude, tomtomMap.userLocation!!.longitude)
         searchApi.search(FuzzySearchQueryBuilder(searchWord)
                 .withTypeAhead(true)
                 .withMinFuzzyLevel(2)
@@ -403,7 +405,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
         fusedLocationClient.lastLocation.addOnSuccessListener(requireActivity()) { location: Location? ->
             uLocation = location
             latLngCurrentPosition = LatLng(location?.latitude!!, location.longitude)
-            tomtomMap.centerOn(uLocation!!.latitude, uLocation!!.longitude, 15.0)
         }
     }
 
