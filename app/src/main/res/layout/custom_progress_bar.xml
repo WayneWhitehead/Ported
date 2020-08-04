@@ -37,7 +37,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:indeterminate="true"
-        android:indeterminateTint="@color/yellowPrimary"
+        android:indeterminateTint="@color/bluePrimary"
         android:max="100" />
 
     <ImageView

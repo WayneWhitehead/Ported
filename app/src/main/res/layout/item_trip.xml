@@ -48,7 +48,7 @@
                 android:layout_weight="0.7"
                 android:padding="10dp"
                 android:gravity="center"
-                android:background="@color/redPrimary"
+                android:background="@color/colorPrimary"
                 android:orientation="vertical">
 
                 <TextView
@@ -56,7 +56,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAlignment="center"
-                    android:textColor="@android:color/white"
+                    android:textColor="@android:color/black"
                     android:text="@string/template_address"
                     android:textSize="15sp" />
 
@@ -64,14 +64,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
                     android:layout_margin="5dp"
-                    android:background="@color/redPrimaryDark" />
+                    android:background="@color/colorPrimaryDark" />
 
                 <TextView
                     android:id="@+id/EndLocation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAlignment="center"
-                    android:textColor="@android:color/white"
+                    android:textColor="@android:color/black"
                     android:text="@string/template_address"
                     android:textSize="15sp" />
             </LinearLayout>
@@ -87,7 +87,7 @@
                 android:layout_gravity="center"
                 android:layout_weight="0.25"
                 android:gravity="center"
-                android:background="@color/redPrimaryDark"
+                android:background="#E3D311"
                 android:orientation="vertical">
 
                 <TextView
@@ -95,7 +95,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:textColor="@android:color/white"
+                    android:textColor="@android:color/black"
                     android:text="30"
                     android:textSize="30sp"
                     tools:ignore="HardcodedText" />
@@ -104,7 +104,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:textColor="@android:color/white"
+                    android:textColor="@android:color/black"
                     android:text="Km/Mi"
                     android:textSize="15sp"
                     tools:ignore="HardcodedText" />

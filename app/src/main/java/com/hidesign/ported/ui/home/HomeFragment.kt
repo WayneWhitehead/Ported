@@ -118,7 +118,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
         openDrawer.setOnClickListener { navDrawer.openDrawer(GravityCompat.START) }
 
         initLocationSource()
-        lastKnownLocation()
 
         val mapFragment = childFragmentManager.findFragmentById(R.id.map_fragment) as MapFragment
         mapFragment.getAsyncMap(onMapReadyCallback)
@@ -137,6 +136,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 searchTimerHandler.removeCallbacks(searchRunnable)
             }
+
             override fun afterTextChanged(s: Editable) {
                 if (s.isNotEmpty()) {
                     if (s.length >= 4) {
@@ -157,7 +157,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
     }
 
     private fun searchAddress(searchWord: String) {
-        latLngCurrentPosition = LatLng(tomtomMap.userLocation!!.latitude, tomtomMap.userLocation!!.longitude)
         searchApi.search(FuzzySearchQueryBuilder(searchWord)
                 .withTypeAhead(true)
                 .withMinFuzzyLevel(2)
@@ -178,6 +177,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
                             searchAdapter.filter.filter("")
                         }
                     }
+
                     override fun onError(e: Throwable) {
                         Toast.makeText(activity, e.localizedMessage, Toast.LENGTH_SHORT).show()
                     }
@@ -387,6 +387,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
                     setNavigation()
                 }
             }
+
             override fun onError(e: Throwable) {
                 Toast.makeText(context, e.localizedMessage, Toast.LENGTH_LONG).show()
             }
@@ -395,6 +396,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
 
     private fun initLocationSource() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+        lastKnownLocation()
     }
 
     private fun lastKnownLocation() {

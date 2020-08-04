@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_gravity="center"
     android:background="@android:color/primary_text_light_nodisable"
-    android:theme="@style/AppThemeYellow"
+    android:theme="@style/AppTheme"
     tools:context=".intro.Register">
 
     <LinearLayout
@@ -75,8 +75,8 @@
                 android:insetBottom="3dp"
                 android:text="@string/submit"
                 android:textColor="@android:color/black"
-                android:backgroundTint="@color/yellowPrimary"
-                app:rippleColor="@color/yellowPrimaryDark" />
+                android:backgroundTint="@color/colorPrimary"
+                app:rippleColor="@color/colorPrimaryDark" />
         </LinearLayout>
     </LinearLayout>
 
