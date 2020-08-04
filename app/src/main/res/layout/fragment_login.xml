@@ -66,7 +66,8 @@
                 android:id="@+id/google"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:layout_marginTop="15dp" />
+                android:layout_marginTop="15dp"
+                android:visibility="gone"/>
         </LinearLayout>
     </LinearLayout>
 

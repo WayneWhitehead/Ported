@@ -55,9 +55,9 @@
                     android:layout_height="match_parent"
                     android:layout_width="match_parent"
                     android:inputType="textPostalAddress"
-                    android:backgroundTint="#B2FFFFFF"
-                    android:textColorHint="#B2FFFFFF"
-                    android:textColor="@android:color/white"
+                    android:backgroundTint="#232323"
+                    android:textColorHint="#232323"
+                    android:textColor="@android:color/black"
                     android:imeOptions="actionSearch"
                     android:layout_marginEnd="15dp"
                     android:dropDownWidth="match_parent"
@@ -79,15 +79,18 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_gravity="end"
-            android:text="+"
+            android:text="@string/plus"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:elevation="100dp"
             app:strokeColor="#00000000"
             android:textSize="20sp"
             app:icon="@drawable/plus"
+            app:iconTint="@color/colorPrimaryDark"
             app:iconGravity="textStart"
             app:iconSize="40dp"
             android:contentDescription="@string/zoominbutton"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:padding="5dp"/>
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/zoomDecrease"
             android:layout_width="50dp"
@@ -100,6 +103,7 @@
             app:iconGravity="textStart"
             app:iconSize="40dp"
             android:layout_marginBottom="5dp"
+            app:iconTint="@color/colorPrimaryDark"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:contentDescription="@string/zoominbutton"
             android:padding="5dp" />
@@ -119,7 +123,7 @@
                 android:layout_marginEnd="10dp"
                 android:animateLayoutChanges="true"
                 android:layout_marginBottom="-10dp"
-                app:cardBackgroundColor="@color/colorPrimaryDark"
+                app:cardBackgroundColor="@color/colorPrimary"
                 app:cardCornerRadius="15dp"
                 app:cardElevation="6dp">
 
@@ -135,7 +139,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/arrive_at"
-                        android:textColor="@android:color/white"
+                        android:textColor="@android:color/black"
                         android:textSize="12sp"/>
 
                     <TextView
@@ -144,7 +148,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="sans-serif"
                         android:text="@string/temp_time"
-                        android:textColor="@android:color/white"
+                        android:textColor="@android:color/black"
                         android:textSize="20sp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -176,7 +180,7 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@color/colorPrimary"
+                        android:background="@color/colorPrimaryDark"
                         android:layout_toEndOf="@id/cancelNavigation"
                         android:layout_toStartOf="@id/distanceLayout">
 
