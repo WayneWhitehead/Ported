@@ -61,4 +61,8 @@
     <string name="nav_header_image">Nav Header Image</string>
     <string name="plus">+</string>
     <string name="zoominbutton">zoomInButton</string>
+    <string name="metric">Metric</string>
+    <string name="imperial">Imperial</string>
+    <string name="average_distance">Average Distance</string>
+    <string name="average_time">Average Time</string>
 </resources>

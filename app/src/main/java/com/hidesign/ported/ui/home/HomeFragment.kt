@@ -25,8 +25,7 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
 import com.hidesign.ported.Functions
 import com.hidesign.ported.R
 import com.hidesign.ported.models.Trips
@@ -100,9 +99,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val layout = inflater.inflate(R.layout.fragment_home, container, false)
 
-        val mFirebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity())
-        mFirebaseAnalytics.setCurrentScreen(requireActivity(), "Home Fragment", "MapView")
-
         searchApi = OnlineSearchApi.create(requireActivity())
         locationSearch = layout.findViewById(R.id.atv_main_destination_location)
         searchAdapter = ArrayAdapter(requireActivity(), android.R.layout.simple_dropdown_item_1line, searchAutocompleteList)
@@ -125,6 +121,15 @@ class HomeFragment : Fragment(), OnMapReadyCallback, MatcherListener {
         val zoomOut: MaterialButton = layout.findViewById(R.id.zoomDecrease)
         zoomIn.setOnClickListener { tomtomMap.zoomTo(tomtomMap.zoomLevel.inc()) }
         zoomOut.setOnClickListener { tomtomMap.zoomTo(tomtomMap.zoomLevel.dec()) }
+
+        mDatabase.child("Settings").child("Measurement").addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                for (postSnapshot in dataSnapshot.children) {
+                    val measurement = postSnapshot.value
+                }
+            }
+            override fun onCancelled(databaseError: DatabaseError) {}
+        })
 
         return layout
     }

@@ -33,10 +33,17 @@ class Functions {
     fun getTravelMode(i: Int): TravelMode {
         when (i) {
             2131230803 -> return TravelMode.CAR
-            2131230804 -> return TravelMode.BUS
             2131230805 -> return TravelMode.PEDESTRIAN
         }
         return TravelMode.CAR
+    }
+
+    fun getMesurementMode(i : Int): Int {
+        when (i) {
+            2131230803 -> return 0
+            2131230805 -> return 1
+        }
+        return 0
     }
 
     fun getAddress(latitude: Double, longitude: Double, c: Context): String {

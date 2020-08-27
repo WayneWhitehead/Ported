@@ -85,7 +85,7 @@
             app:strokeColor="#00000000"
             android:textSize="20sp"
             app:icon="@drawable/plus"
-            app:iconTint="@color/colorPrimaryDark"
+            app:iconTint="@android:color/black"
             app:iconGravity="textStart"
             app:iconSize="40dp"
             android:contentDescription="@string/zoominbutton"
@@ -103,7 +103,7 @@
             app:iconGravity="textStart"
             app:iconSize="40dp"
             android:layout_marginBottom="5dp"
-            app:iconTint="@color/colorPrimaryDark"
+            app:iconTint="@android:color/black"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:contentDescription="@string/zoominbutton"
             android:padding="5dp" />
